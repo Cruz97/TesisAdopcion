@@ -7,6 +7,8 @@ import {Icon} from 'react-native-elements'
 // import Database from '../../database'
 import {myTheme} from '../../src/assets/styles/Theme'
 import firebase from '@react-native-firebase/app'
+import auth from '@react-native-firebase/auth'
+//import database from '@react-native-firebase/database'
 
 const Item = ({ label, color, icon, selected, onPress }) => (
   <Drawer.Item
@@ -45,10 +47,7 @@ class DrawerCustom extends Component {
   }
 
   singOut = () => {
-    let fire = firebase.app('TesisAdopcion')
-    fire.auth().signOut().then(()=>{
-      this.props.navigation.navigate('Welcome')
-    })
+    firebase.auth().signOut().then(()=>this.props.navigation.navigate('Loading'))
   }
 
   goToPage(routeName) {

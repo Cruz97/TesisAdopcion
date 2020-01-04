@@ -6,9 +6,18 @@ import {myTheme} from '../../src/assets/styles/Theme'
 import { Avatar, Icon } from 'react-native-elements';
 import ButtonCustom from '../../components/ButtonCustom'
 import {  Button, Card, Title,Paragraph } from 'react-native-paper';
+import firebase from '@react-native-firebase/app'
+import auth from '@react-native-firebase/auth'
+import database from '@react-native-firebase/database'
 
 
 export class HomeAdoptante extends Component {
+
+    constructor(props){
+        super(props);
+       // alert(JSON.stringify(firebase.auth().currentUser,null,4))
+    }
+
     static navigationOptions = {
         title: 'Inicio Adoptante',
         hideRightComponent: 'hide',

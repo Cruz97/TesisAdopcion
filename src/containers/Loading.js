@@ -6,7 +6,7 @@ import Realm from 'realm';
 import Odoo from 'react-native-odoo-promise-based'
 import { Alert } from 'react-native';
 import firebase from '@react-native-firebase/app'
-// import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 
 const schemaName = 'User';
@@ -70,29 +70,13 @@ export default class Loading extends Component {
     
     firebase.initializeApp(firebaseConfig,'TesisAdopcion');
 
-    // const r = firebase.database()
-
-    this.props.navigation.navigate(false ? 'AppAdoptante' : 'Welcome')
-
-    // alert(JSON.stringify(r,null,4))
-    //alert('')
-        // alert(JSON.stringify(firebase.app('TesisAdopcion'),null,4))
-
-    // onSignIn()
-    // let fire = firebase.app('TesisAdopcion')
-    //fire.database('https://adopcionapppets.firebaseio.com/')
-    // alert(JSON.stringify(db,null,4))  
-
-    // fire.auth().onAuthStateChanged(user => {
-      
-          
-    //   this.props.navigation.navigate(user ? 'AppAdoptante' : 'Welcome')
-    //   // const user = auth().currentUser;
-
-    //   alert(JSON.stringify(user,null,4))
-    // })
-
-  //  this.props.navigation.navigate('Welcome')
+    //Si existe un usuario logeado, pasa al Home del Adoptante
+    //Caso contrario a la vista de Inicio
+    setTimeout(()=>{
+      this.props.navigation.navigate(firebase.auth().currentUser ? 'AppAdoptante' : 'Welcome')
+   },2000)
+    
+ 
      
       
  

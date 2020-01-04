@@ -17,24 +17,6 @@ import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 
- 
-
-
-// var firebaseConfig = {
-//     apiKey: "AIzaSyA-SF_q7fsX-AHXjqTCkh-V5kieN_EVWFU",
-//     //authDomain: "tesisadopcion-2525f.firebaseapp.com",
-//     databaseURL: "https://adopcionapppets.firebaseio.com",
-//     projectId: "adopcionapppets",
-//     storageBucket: "adopcionapppets.appspot.com",
-//     messagingSenderId: "253581692222",
-//     appId: "1:253581692222:android:32b2eccd99b1036904b06f",
-//     //measurementId: "G-CN49WCNDPZ"
-//   };
-  // Initialize Firebase
-  
-  
-  //firebase.app()
-  //firebase.analytics();
 
 
 
@@ -44,81 +26,11 @@ export class LoginAdoptante extends Component {
   }
   componentDidMount(){
     
-    // let user = {
-    //     username: 'grace',
-    //     password: '123'
-    // }
-
-        // Create a reference to the cities collection
-    // let citiesRef = firebase.database()
-    // alert(JSON.stringify(citiesRef,null,4))
-
-    // Create a query against the collection
-    // let queryRef = citiesRef.where('capital', '==', true);
-
-    //let rootRef = firebase.database.ref();
-    //let usersRef = rootRef.child("usuarios");
-    
-
-    let refUser = firebase.database().ref('usuarios')
-    const arrayUser = refUser.on('value',snapshot => {
-        // let snap = snapshot.val()
-         alert(JSON.stringify(snapshot,null,4))
-    })
-    //alert(JSON.stringify(arrayUser,null,4))
-    // const newUser = refUser.push()
-    // newUser.set(user)
-    
-
-    //   fire.auth().signInWithEmailAndPassword('jose.cruz.alv97@gmail.com','reconocer97').then((user)=>{
-    //              alert(JSON.stringify(user,null,4))
-    //          }).catch((e)=>{
-    //             alert('catch: '+JSON.stringify(e.message,null,4))
-    //          });
-
-
-
-    //   alert(JSON.stringify(firebase,null,4))
-    //   firebase.auth().signInWithEmailAndPassword('jose.cruz.alv97@gmail.com','reconocer97').then((user)=>{
-    //          alert(JSON.stringify(user,null,4))
-    //      }).catch((e)=>{
-    //         alert('catch: '+JSON.stringify(e,null,4))
-    //      });
-
-    //   firebase.analytics();
   }
 
   constructor(props){
     super(props);
     const {navigation} = props;
-
-    // const user = auth().currentUser;
-    // alert(user)
-
-    
-    // let app = 
-    //firebase.app('AdopcionAppPets')
-    // let app = firebase.initializeApp(firebaseConfig,'AdopcionAppPets')
-
-    // alert(firebase.auth.length)
-
-//    firebase.initializeApp()
-    // firebase.initializeApp(firebaseConfig)
-    // alert(JSON.stringify(app,null,4))
-    // let app = firebase.initializeApp(firebaseConfig)
-    // alert(JSON.stringify(app,null,4))
-    //  app.auth().signInWithEmailAndPassword('jose.cruz.alv97@gmail.com','reconocer97').then((user)=>{
-    //      alert(JSON.stringify(user,null,4))
-    //  }).catch((e)=>{
-    //     alert('catch: '+JSON.stringify(e,null,4))
-    //  });
-     //new Promise()
-    //  alert(JSON.stringify(r,null,4))
-    // alert(JSON.stringify(app,null,4))
-    //app.auth().signInWithEmailAndPassword('jose.cruz.alv97@gmail.com','reconocer97')
-    // firebase.auth().signInWithEmailAndPassword('jose.cruz.alv97@gmail.com','reconocer97')
-    // let res = register('jose.cruz.alv97@gmail.com','reconocer97');
-    // alert(JSON.stringify(r,null,4))
     
     this.unsubscriber = null;
     
@@ -138,37 +50,25 @@ export class LoginAdoptante extends Component {
 
 }
 
-// componentDidMount() {
-//     this.unsubscriber = app.auth().onAuthStateChanged((user) => {
-//       this.setState({ user });
-//     });
-//   }
+Login = () => {
+    let email = this.state.usuario;
+    let password = this.state.contrasena;
 
-//   componentWillUnmount() {
-//     if (this.unsubscriber) {
-//       this.unsubscriber();
-//     }
-//   }
-
-
-
-    Login = () =>{
-        // let fire = firebase.app('TesisAdopcion')
-
-        // let email = this.state.usuario;
-        // let password = this.state.contrasena;
-
-        // fire.auth().signInWithEmailAndPassword(email,password).then((user)=>{
-        //         this.props.navigation.navigate('AppAdoptante')
-        //          alert(JSON.stringify(user,null,4))
-        //      }).catch((e)=>{
-        //         alert('catch: '+JSON.stringify(e.message,null,4))
-        //      });
+    firebase.auth().signInWithEmailAndPassword(email,password).then(
+        userCredential =>{
+            if(userCredential.user){
+                this.props.navigation.navigate('Loading')
+                // setTimeout(()=>{
+                //     this.props.navigation.navigate('AppAdoptante')
+                // },2000)
+            }
+            // alert(JSON.stringify(userCredential,null,4))
+        }
+    )
+}
 
 
 
-
-    }
 
 
      handleUser = (text) => this.setState({usuario: text})
@@ -202,7 +102,7 @@ export class LoginAdoptante extends Component {
 
                     <View style={style.form}>
                     <Input
-                        placeholder=' Usuario'
+                        placeholder=' Correo electrónico'
                         ref='usuarioInput'
                         keyboardType='email-address'
                         value={this.state.usuario}
@@ -262,6 +162,24 @@ export class LoginAdoptante extends Component {
                             }
                             onPress={()=>{
                                 this.Login()
+                            }}
+                            
+                           />
+
+
+                    <ButtonCustom  
+                            title="Registrarse"
+                            primary
+                            buttonStyle={
+                                {
+                                    marginTop:10,
+                                    borderRadius: 20
+                                
+                                }
+
+                            }
+                            onPress={()=>{
+                                this.props.navigation.navigate('NewAccount')
                             }}
                             
                            />

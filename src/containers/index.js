@@ -23,6 +23,7 @@ import Loading from './Loading';
 
 import Login from '../../containers/Login';
 import Welcome from '../../containers/Welcome';
+import NewAccount from '../../containers/NewAccount';
 import LoginAdoptante from '../../containers/LoginAdoptante';
 import LoginFundacion from '../../containers/LoginFundacion';
 
@@ -63,7 +64,8 @@ const Auth = createStackNavigator({
   Welcome,
   LoginAdoptante,
   LoginFundacion,
-  Login
+  Login,
+  NewAccount
 });
 
 const stackAppAdoptante = createStackNavigator(
