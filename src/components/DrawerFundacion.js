@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import { Divider, List, Colors, Drawer } from 'react-native-paper';
 import { Layout, withStyles } from 'react-native-ui-kitten';
 import CustomIcon from '../../components/CustomIcon';
-import {StyleSheet, Text, Platform, ScrollView} from 'react-native';
+import {StyleSheet, Text, Platform, ScrollView, Image} from 'react-native';
 import {Icon} from 'react-native-elements'
 import Database from '../../database'
+import firebase from '@react-native-firebase/app'
+import auth from '@react-native-firebase/auth'
+import database from '@react-native-firebase/database'
+
 
 
 
@@ -13,7 +17,7 @@ const Item = ({ label, color, icon, selected, onPress }) => (
   <Drawer.Item
     label={label}
     icon = {()=>(
-        <CustomIcon name={icon} size={30} color={selected ? '#A88C3D': null}/>
+        <CustomIcon name={icon} size={24} color={selected ? '#A88C3D': null}/>
     )}
     theme={{colors: {primary: '#A88C3D'}}}
     active={selected}
@@ -47,15 +51,17 @@ const Item = ({ label, color, icon, selected, onPress }) => (
 //   />
 // );
 
+
+
 class DraweFundacion extends Component {
   constructor(props) {
     super(props);
-    //const {navigation} = this.props;
-    
-    //const uuid = navigation.state.params.userid;
-    //alert('drawer: '+uuid)
-    //navigation.navigate('MyMembresy',{uuid: uuid});
-    
+    const {navigation} = props;
+    const foundation = navigation.getParam('foundation',null);
+    this.state = {
+      active: 'Home',
+      foundation
+    };
     
   }
 
@@ -63,10 +69,11 @@ class DraweFundacion extends Component {
   
   }
 
+  signOut = () => {
+    firebase.auth().signOut().then(()=>this.props.navigation.navigate('Loading'))
+  }
 
-  state = {
-    active: 'Home',
-  };
+ 
 
   closeSession = () => {
     Database.LocalDB.deleteAllObjects('User');
@@ -97,35 +104,46 @@ class DraweFundacion extends Component {
     const {routes} = state.routes['0'];
     const {routeName} = routes[routes.length-1]
 
+    
+    //const foundation = 
+
     return (
       <ScrollView style={{ flex: 1 }}>
-        <Layout  >
+         <Layout style={{alignItems: 'center'}} >
+       <Image
+        source={{uri: this.state.foundation.photo}}
+        style={{
+          resizeMode: 'stretch',
+          height: 180,
+          width: 200,
+          marginTop: 40
+      }
+      }
+       >
+
+       </Image>
+
+     </Layout>
+
+     <Drawer.Section>
+     <Text style={style.name}>
+          Fundación: {this.state.foundation.name}
+        </Text>
+     </Drawer.Section>
        
        <Drawer.Section title="Menu">
          {/* <Item label="Inicio" icon="menu1" selected={routeName === 'Membresy'} onPress={() => { this.setState({ active: 'MyMembresy' });  this.props.navigation.navigate('MyMembresy')}}/> */}
-         <Item label="Mi Membresia" icon="menu2" selected={routeName === 'MyMembresy'} onPress={() => { this.setState({ active: 'MyMembresy' }); this.props.navigation.navigate('MyMembresy') }}/>
-         <Item label="Certificados" icon="menu3" selected={routeName === 'Certificates'} onPress={() => { this.setState({ active: 'Certificates' }); this.props.navigation.navigate('Certificates') }}/>
-         <Item label="Transacciones" icon="menu4" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
-         {/* <Item label="Tarjeta Club Oro Verde" icon="menu5" selected={routeName === 'CardClub'} onPress={() => { this.setState({ active: 'CardClub' }); this.props.navigation.navigate('CardClub') }}/> */}
-       </Drawer.Section>
-
-       {/* <Drawer.Section title="Destinos">
-        
-         <Item label="Hoteles" icon="menu6" selected={routeName === 'Hotels2'} onPress={() => { this.setState({ active: 'Hotels2' }); this.props.navigation.navigate('Hotels2')}}/>
-         <Item label="Centros de consumo" icon="menu7" selected={routeName === 'Restaurants'} onPress={() => { this.setState({ active: 'Restaurants' }); this.props.navigation.navigate('Restaurants')}}/>
-         <Item label="Ofertas" icon="menu8" selected={routeName === 'Offer'} onPress={() => { this.setState({ active: 'Offer' }); this.props.navigation.navigate('Offer')}}/>
-         <Item label="Beneficios" icon="menu9" selected={routeName === 'Benefits'} onPress={() => { this.setState({ active: 'Benefits' }); this.props.navigation.navigate('Benefits')}}/>
-     
-     </Drawer.Section> */}
-
-       <Drawer.Section title="Acerca de">
-         <Item label="Contacto" icon="menu10" selected={routeName === 'Contact'} onPress={() => { this.setState({ active: 'Contact' }); this.props.navigation.navigate('Contact') }}/>
-         <Item label="Cerrar Sesión"  icon = "menuexit"  onPress={() => { this.setState({ active: 'Tools' }); this.closeSession()}}/>
+         <Item label="Inicio" icon="home" selected={routeName === 'MyMembresy'} onPress={() => { this.setState({ active: 'MyMembresy' }); this.props.navigation.navigate('MyMembresy') }}/>
+         <Item label="Mascotas" icon="mascota" selected={routeName === 'MascotasF'} onPress={() => { this.setState({ active: 'MascotasF' }); this.props.navigation.navigate('MascotasF') }}/>
+         <Item label="Nosotros" icon="fundacion" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
+         <Item label="Reportes" icon="solicitud" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
+         <Item label="Acerca de" icon="mascota" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
+         <Item label="Cerrar Sesión"  icon = "cerrar"  onPress={() => { this.setState({ active: 'Tools' }); this.signOut()}}/>
     </Drawer.Section>
 
      
       
-     </Layout>
+    
       </ScrollView>
     );
   }
@@ -139,6 +157,12 @@ const style = StyleSheet.create({
   },
   texto:{
     paddingLeft: 5
+  },
+  name:{
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    // marginTop: 20
   }
 
   //Platform.

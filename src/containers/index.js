@@ -37,6 +37,8 @@ import Donaciones from '../../containers/Adoptante/Donaciones';
 
 
 import HomeFundacion from '../../containers/Fundacion/HomeFundacion';
+import MascotasF from '../../containers/Fundacion/MascotasF';
+import Publication from '../../containers/Fundacion/Publication';
 import HeaderFundacion from '../components/HeaderFundacion';
 
 
@@ -90,7 +92,9 @@ const stackAppAdoptante = createStackNavigator(
 const stackAppFundacion = createStackNavigator(
   {
       //Login,
-    HomeFundacion
+    HomeFundacion,
+    MascotasF,
+    Publication
       // Hotels2,
       //ConsumptionsCenter,
 

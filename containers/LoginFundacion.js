@@ -8,8 +8,12 @@ import * as validUrl from 'valid-url';
 import Odoo from 'react-native-odoo-promise-based'
 import {Dialog} from 'react-native-simple-dialogs'
 import moment from 'moment';
+import firebase from '@react-native-firebase/app'
+import auth from '@react-native-firebase/auth'
+import database from '@react-native-firebase/database'
 import {ButtonCustom} from '../components/index'
 import {myTheme} from '../src/assets/styles/Theme'
+
 
 
 
@@ -22,8 +26,12 @@ export class LoginFundacion extends Component {
     const {navigation} = props;
     
     this.state = {
-        usuario: '',
-        contrasena: '',
+        correo: 'gpa.claudiapoppe@gmail.com',
+        contrasena: 'gpaclaudiapoppe',
+        // correo: 'amigosconcola@gmail.com',
+        // contrasena: 'amigosconcola',
+        // correo: 'refugiopana@gmail.com',
+        // contrasena: 'refugiopana',
         
         loading: true,
         show: false,
@@ -32,10 +40,102 @@ export class LoginFundacion extends Component {
 
 }
 
+createFoundation = (email,password,name,zone,phone,manager,photo) => {
+    firebase.auth().createUserWithEmailAndPassword(
+        email, password
+    ).then(userCredentials => {
+        //Si es un nuevo usuario
+        if(userCredentials.additionalUserInfo.isNewUser){
+            //Se guarda en la DB Real Time
+            let uid = userCredentials.user.uid;
+            let refUser = firebase.database().ref('usuarios/'+uid)
+
+            //Crea un objeto usuario sino existe, y si existe modifica sus campos
+            refUser.set({
+                // username: 'Josecruz',
+                name,
+                email: userCredentials.user.email,
+                photo,
+                zone,
+                phone,
+                manager,
+                typeUser: 'foundation',
+                
+                
+                
+              }).then(()=>{
+                alert('se creo una fundacion')
+
+                 // alert('Usuario creado en la BD Real Time')
+              }).catch(error =>{
+                  alert('Ocurrio algo '+JSON.stringify(error,null,4))
+              });
+
+        }
+
+        // let uid = userCredentials.user.uid
+        // alert(JSON.stringify(userCredentials.additionalUserInfo,null,4))
+    }).catch(error => {
+        alert(JSON.stringify(error.code,null,4))
+    })
+
+}
+
+createDataDoundation = () =>{
+    this.createFoundation(
+        'amigosconcola@gmail.com',
+        'amigosconcola',
+        'Amigos con Cola',
+        'Centro',
+        '0995684828',
+        'Javier Cevallos',
+        'https://josecruzal.000webhostapp.com/fundaciones/amigosconcola.jpg'
+        )
+        this.createFoundation(
+            'gpa.claudiapoppe@gmail.com',
+            'gpaclaudiapoppe',
+            'GPA Claudia Poppe',
+            'Norte',
+            '0967416653',
+            'Lcda. Monica Santos',
+            'https://josecruzal.000webhostapp.com/fundaciones/gpaclaudiapoppe.jpg'
+            )
+            this.createFoundation(
+                'refugiopana@gmail.com',
+                'refugiopana',
+                'Proteccion y Ayuda a Nuestros Animales',
+                'Sur',
+                '0991882949',
+                'Psi. katiuska Delgado',
+                'https://josecruzal.000webhostapp.com/fundaciones/pana.jpg'
+                )
+
+}
+
+
+componentDidMount(){
+    //this.createDataDoundation()
+    
+}
+
+Login = () => {
+    let email = this.state.correo;
+    let password = this.state.contrasena;
+
+    if(email == '' || password == ''){
+        Alert.alert('Información requerida','Pro favor ingrese un correo y una contraseña')
+        return
+    }
+
+    this.props.navigation.navigate('Loading',{
+       email: email, password: password
+    })
+}
 
 
 
-     handleUser = (text) => this.setState({usuario: text})
+
+     handleEmail = (text) => this.setState({correo: text})
 
      handlePassword = (text) => this.setState({contrasena: text})
 
@@ -66,13 +166,13 @@ export class LoginFundacion extends Component {
 
                     <View style={style.form}>
                     <Input
-                        placeholder=' Usuario'
+                        placeholder=' Correo electrónico'
                         ref='usuarioInput'
                         keyboardType='ascii-capable'
-                        value={this.state.usuario}
-                        maxLength={13}
+                        value={this.state.correo}
+                        //maxLength={13}
                         placeholderTextColor='black'
-                        onChangeText={this. handleUser}
+                        onChangeText={this. handleEmail}
                         inputStyle={
                             {
                             color: 'black',
@@ -123,14 +223,16 @@ export class LoginFundacion extends Component {
                                 }
 
                             } 
-                            onPress={()=>{
-                                this.props.navigation.navigate('AppFundacion')
-                            }}
+                            onPress={()=>
+                                this.Login()
+                            }
                             
                            />
                     </View>
 
                 </View>
+
+                
  
             </View>
         )

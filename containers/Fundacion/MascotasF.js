@@ -21,10 +21,10 @@ const dropdownlist = [
     }
 ]
 
-export class HomeAdoptante extends Component {
+export class MascotasF extends Component {
 
     static navigationOptions = {
-        title: 'Inicio',
+        title: 'Mascotas',
         hideRightComponent: 'hide',
     }
 
@@ -86,7 +86,7 @@ export class HomeAdoptante extends Component {
             </ScrollView>
             <ActionButton
                     buttonColor={myTheme['color-primary-700']}
-                    onPress={() => { alert('nueva')}}
+                    onPress={() => this.props.navigation.navigate('Publication') }
                     
                     position='right'
                     offsetX={10}
@@ -193,4 +193,4 @@ const style = StyleSheet.create({
     },
 })
 
-export default HomeAdoptante
+export default MascotasF

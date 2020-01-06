@@ -8,7 +8,9 @@ import {Icon} from 'react-native-elements'
 import {myTheme} from '../../src/assets/styles/Theme'
 import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
-//import database from '@react-native-firebase/database'
+import database from '@react-native-firebase/database'
+
+
 
 const Item = ({ label, color, icon, selected, onPress }) => (
   <Drawer.Item
@@ -27,18 +29,45 @@ const Item = ({ label, color, icon, selected, onPress }) => (
 class DrawerCustom extends Component {
   constructor(props) {
     super(props);
+    const {navigation} = props;
+    const user = navigation.getParam('user',null);
+    
+
+    // alert(data)
+    
+    this.state = {
+      active: 'Home',
+      user
+    };
     
     
   }
 
   componentDidMount(){
+    // let uid = firebase.auth().currentUser.uid;
+    // let refUser = firebase.database().ref('usuarios/'+uid+'/name')
+    // alert(refUser)
+    //let user
+    // let user=''
+  
+    // refUser.on('value',(snapshot)=>{
+    //    this.setState({
+    //      active: 'Home',
+    //      user: snapshot.val()
+    //    })
+
+    //   // alert(JSON.stringify(user,null,4))
+       
+       
+    // })
+    
+
+    //alert(this.state.user)
   
   }
 
 
-  state = {
-    active: 'Home',
-  };
+  
 
   closeSession = () => {
     Database.LocalDB.deleteAllObjects('User');
@@ -66,8 +95,14 @@ class DrawerCustom extends Component {
     const {routes} = state.routes['0'];
     const {routeName} = routes[routes.length-1]
 
+    const user = this.state.user
+
+    // alert('ver: '+JSON.stringify(this.state.user,null,4))
+    
+
     return (
       <ScrollView style={{ flex: 1 }}>
+        
         <Layout style={{alignItems: 'center'}} >
        <Image
         source={require('../../assets/img/img_menu.jpeg')}
@@ -79,8 +114,19 @@ class DrawerCustom extends Component {
        >
 
        </Image>
+       
               
      </Layout>
+     <Drawer.Section>
+       
+       <Text style={style.info}>
+          {user.name+' '+user.lastname }
+       </Text>
+       {/* <Text style={style.info}>
+          {user.email}
+       </Text> */}
+     </Drawer.Section>
+     
      <Drawer.Section style={{marginLeft: 10}}>
          {/* <Item label="Inicio" icon="menu1" selected={routeName === 'Membresy'} onPress={() => { this.setState({ active: 'MyMembresy' });  this.props.navigation.navigate('MyMembresy')}}/> */}
          <Item label="Inicio" icon="home" selected={routeName === 'HomeAdoptante'} onPress={() => { this.setState({ active: 'HomeAdoptante' }); this.props.navigation.navigate('HomeAdoptante') }}/>
@@ -105,6 +151,14 @@ const style = StyleSheet.create({
   },
   texto:{
     paddingLeft: 5
+  },
+  info:{
+    // marginLeft: 20,
+    marginRight: 23,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    marginBottom: 5,
   }
 
   //Platform.

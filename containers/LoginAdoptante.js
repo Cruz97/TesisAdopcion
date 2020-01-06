@@ -16,6 +16,8 @@ import {ButtonCustom} from '../components/index'
 import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
+import {myTheme} from '../src/assets/styles/Theme'
+
 
 
 
@@ -36,8 +38,8 @@ export class LoginAdoptante extends Component {
     
     
     this.state = {
-        usuario: '',
-        contrasena: '',
+        usuario: 'josecruz@outlook.com',
+        contrasena: 'abc123',
         
         loading: true,
         show: false,
@@ -54,17 +56,29 @@ Login = () => {
     let email = this.state.usuario;
     let password = this.state.contrasena;
 
-    firebase.auth().signInWithEmailAndPassword(email,password).then(
-        userCredential =>{
-            if(userCredential.user){
-                this.props.navigation.navigate('Loading')
-                // setTimeout(()=>{
-                //     this.props.navigation.navigate('AppAdoptante')
-                // },2000)
-            }
-            // alert(JSON.stringify(userCredential,null,4))
-        }
-    )
+    if(email == '' || password == ''){
+        Alert.alert('Información requerida','Pro favor ingrese un correo y una contraseña')
+        return
+    }
+
+    this.props.navigation.navigate('Loading',{
+       email: email, password: password
+    })
+
+
+    // firebase.auth().signInWithEmailAndPassword(email,password).then(
+    //     userCredential =>{
+    //         if(userCredential.user){
+    //             setTimeout(() => {
+    //                 this.props.navigation.navigate('Loading')
+    //             }, 2000);
+    //             // setTimeout(()=>{
+    //             //     this.props.navigation.navigate('AppAdoptante')
+    //             // },2000)
+    //         }
+    //         // alert(JSON.stringify(userCredential,null,4))
+    //     }
+    // )
 }
 
 
@@ -154,8 +168,9 @@ Login = () => {
                             primary
                             buttonStyle={
                                 {
-                                    marginTop:10,
-                                    borderRadius: 20
+                                    marginTop:20,
+                                    borderRadius: 20,
+                                    
                                 
                                 }
 
@@ -169,7 +184,7 @@ Login = () => {
 
                     <ButtonCustom  
                             title="Registrarse"
-                            primary
+                            colorcustom={myTheme['color-primary-700']}
                             buttonStyle={
                                 {
                                     marginTop:10,
@@ -186,6 +201,7 @@ Login = () => {
                     </View>
 
                 </View>
+               
  
             </View>
         )

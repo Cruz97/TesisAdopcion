@@ -6,7 +6,9 @@ import { withStyles } from 'react-native-ui-kitten';
 class Selection extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    // this.state = {
+    //   selected:''
+    // };
   }
 
   render() {
@@ -14,36 +16,31 @@ class Selection extends Component {
       style,
       title,
       selectedValue,
-      onValueChange,
       items,
-      showValue,
-      selectedKey,
-      row,
-      themedStyle,
+      onValueChange,
       disabled
     } = this.props;
-    const rowStyle = row ? styles.row : {};
     return (
-      <View style={[{ flex: 0 }, rowStyle, style]}>
+      <View style={[{ flex: 0 }, 
+      style]}>
         <Label>{title}</Label>
         <Picker
           selectedValue={selectedValue}
-          style={{ flex: row ? 1 : 0, marginLeft: row ? '3%' : 0 }}
-          onValueChange={(a, b) => {
-            onValueChange(a, b);
-          }}
-          enabled={!disabled}
+          onValueChange={onValueChange}
         >
-          {Object.entries(items).map(([key, value]) => (
-            <Picker.Item
-              color={
-                disabled ? themedStyle.label.disabled : themedStyle.label.active
-              }
-              label={showValue ? value[showValue] : value}
-              value={selectedKey ? value[selectedKey] : key}
-              key={key}
-            />
-          ))}
+          {
+            Array.from(items).map((item)=>{
+              return(
+                <Picker.Item
+              label={item.value}
+              value={item.value}
+              key={item.key}
+              >
+
+              </Picker.Item>
+              )
+            })
+          }
         </Picker>
       </View>
     );

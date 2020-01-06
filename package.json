@@ -16,6 +16,7 @@
     "moment": "^2.24.0",
     "react": "16.9.0",
     "react-native": "0.61.2",
+    "react-native-action-button": "^2.8.5",
     "react-native-awesome-alerts": "^1.2.0",
     "react-native-color-matrix-image-filters": "^5.2.2",
     "react-native-elements": "^1.2.7",
