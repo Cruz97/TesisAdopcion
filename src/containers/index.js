@@ -26,6 +26,9 @@ import Welcome from '../../containers/Welcome';
 import NewAccount from '../../containers/NewAccount';
 import LoginAdoptante from '../../containers/LoginAdoptante';
 import LoginFundacion from '../../containers/LoginFundacion';
+import ForgetPass from '../../containers/ForgetPass';
+import ResetSuccessfull from '../../containers/ResetSuccessfull';
+import RegisterSuccessfull from '../../containers/RegisterSuccessfull';
 
 
 import HomeAdoptante from '../../containers/Adoptante/HomeAdoptante';
@@ -67,7 +70,10 @@ const Auth = createStackNavigator({
   LoginAdoptante,
   LoginFundacion,
   Login,
-  NewAccount
+  NewAccount,
+  ForgetPass,
+  ResetSuccessfull,
+  RegisterSuccessfull
 });
 
 const stackAppAdoptante = createStackNavigator(

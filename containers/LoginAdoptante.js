@@ -17,6 +17,7 @@ import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 import {myTheme} from '../src/assets/styles/Theme'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
@@ -38,8 +39,12 @@ export class LoginAdoptante extends Component {
     
     
     this.state = {
-        usuario: 'josecruz@outlook.com',
-        contrasena: 'abc123',
+        //usuario: 'josecruz@outlook.com',
+        //contrasena: 'abc123',
+        usuario: '',
+        contrasena: '',
+        // usuario: 'josecruz@outlook.com',
+        // contrasena: 'abc123',
         
         loading: true,
         show: false,
@@ -198,6 +203,15 @@ Login = () => {
                             }}
                             
                            />
+                        <View style={style.forgetpass}>
+                            <TouchableOpacity onPress={()=>{
+                                this.props.navigation.navigate('ForgetPass')
+                            }}>
+                            <Text style={{textAlign: 'center'}}>
+                                Olvidé mi contraseña
+                            </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                 </View>
@@ -335,6 +349,9 @@ const style = StyleSheet.create({
       txtwar:{
         fontSize: 12,
         marginTop: 5
+      },
+      forgetpass:{
+          marginTop: '10%'
       }
       
     

@@ -114,6 +114,7 @@ export default class Loading extends Component {
     if(email == '' || password == ''){
       setTimeout(()=>{
         if(firebase.auth().currentUser){
+          //alert(JSON.stringify(firebase.auth().currentUser,null,4))
           const uid = firebase.auth().currentUser.uid
           let refUser = firebase.database().ref('usuarios/'+uid)
           refUser.on('value',(snapshot)=>{
@@ -156,7 +157,30 @@ export default class Loading extends Component {
             }
             // alert(JSON.stringify(userCredential,null,4))
         }
-    )
+    ).catch(error=>{
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      let mensaje = ''
+      switch(errorCode){
+        case 'auth/invalid-email':
+          mensaje = 'La dirección de correo electrónico no es válida'
+          break;
+        case 'auth/user-disabled':
+          mensaje = 'El usuario correspondiente a este correo ha sido deshabilitado'
+          break;
+        case 'auth/user-not-found':
+          mensaje = 'No existe un usuario registrado con este correo';
+          break;
+        case 'auth/wrong-password':
+          mensaje = 'La contraseña es incorrecta';
+          break;
+        default:
+          mensaje = 'Ha ocurrido un error'
+      }
+      Alert.alert('Error de autenticación', mensaje)
+      //alert(JSON.stringify(error.code + '=> '+error.message,null,4))
+      this.props.navigation.navigate('Welcome')
+    })
 
     }
     

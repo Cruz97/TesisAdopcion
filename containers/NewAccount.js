@@ -7,6 +7,24 @@ import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 import {myTheme} from '../src/assets/styles/Theme'
 
+const actionCodeSettings = {
+    // URL you want to redirect back to. The domain (www.example.com) for
+    // this URL must be whitelisted in the Firebase Console.
+    url: 'https://adopcionpets.page.link',
+    // This must be true for email link sign-in.
+    handleCodeInApp: true,
+    iOS: {
+      bundleId: 'com.example.ios'
+    },
+    android: {
+      packageName: 'com.adopcion.pets',
+      installApp: true,
+      minimumVersion: '12'
+    },
+    // FDL custom domain.
+    dynamicLinkDomain: 'adopcionpets.page.link'
+  };
+
 export class NewAccount extends Component {
     static navigationOptions = {
         // title: 'Registrarse',
@@ -41,7 +59,8 @@ export class NewAccount extends Component {
         const lastname = this.state.apellidos;
 
         if(name == '' || lastname == '' || email == '' || password == ''){
-            Alert.alert('Información Requerida', 'Por favor ingrese toda la información')
+            //Alert.alert('Información Requerida', 'Por favor ingrese toda la información')
+            this.props.navigation.navigate('RegisterSuccessfull')
             return
         }
 
@@ -67,20 +86,33 @@ export class NewAccount extends Component {
                     lastname
                     
                   }).then(()=>{
-                      firebase.auth().signInWithEmailAndPassword(
-                          userCredentials.user.email,
-                          this.state.contrasena
-                      ).then(user =>{
-                        //   alert(JSON.stringify(user,null,4))
-                          this.props.navigation.navigate('Loading')
-                      }).catch(error => {
-                          alert(error.message)
+                    //firebase.auth().sen
+                    firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+                    .then(() => {
+                        alert('Se ha enviado el correo de verificacion')
+                      // Construct email verification template, embed the link and send
+                      // using custom SMTP server.
+                      //return sendCustomVerificationEmail(useremail, displayName, link);
+                    })
+                    .catch((error) => {
+                      alert('error: '+error.message)
+                    });
+                  
+                    //this.props.navigation.navigate('RegisterSuccessfull')
+                    //   firebase.auth().signInWithEmailAndPassword(
+                    //       userCredentials.user.email,
+                    //       this.state.contrasena
+                    //   ).then(user =>{
+                    //     //   alert(JSON.stringify(user,null,4))
+                          
+                    //   }).catch(error => {
+                    //       alert(error.message)
 
-                      })
+                    //   })
 
-                      alert('Usuario creado en la BD Real Time')
+                      //alert('Usuario creado en la BD Real Time')
                   }).catch(error =>{
-                      alert('Ocurrio algo '+JSON.stringify(error,null,4))
+                      alert('Ocurrio algo '+JSON.stringify(error.message,null,4))
                   });
 
             }
@@ -88,7 +120,26 @@ export class NewAccount extends Component {
             // let uid = userCredentials.user.uid
             // alert(JSON.stringify(userCredentials.additionalUserInfo,null,4))
         }).catch(error => {
-            alert(JSON.stringify(error.code,null,4))
+            let errorCode = error.code;
+      let errorMessage = error.message;
+      let mensaje = ''
+      switch(errorCode){
+        case 'auth/email-already-in-use':
+          mensaje = 'Ya existe una cuenta con ésta dirección de correo electrónico'
+          break;
+        case 'auth/invalid-email':
+          mensaje = 'La dirección de correo electrónico no es válida.'
+          break;
+        case 'auth/operation-not-allowed':
+          mensaje = 'La cuenta de correo electrónico / contraseña no están habilitadas';
+          break;
+        case 'auth/weak-password':
+          mensaje = 'La contraseña no es lo suficientemente segura';
+          break;
+        default:
+          mensaje = 'Ha ocurrido un error'
+      }
+      Alert.alert('Error al registrar', mensaje)
         })
     }
 

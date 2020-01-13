@@ -70,6 +70,7 @@ export class Welcome extends Component {
                             buttonStyle={
                                 {
                                     marginTop:30,
+                                    borderRadius: 20
                                     
                                 }
 
@@ -81,10 +82,11 @@ export class Welcome extends Component {
 
                         <ButtonCustom  
                             title="Soy Fundacion"
-                            colorcustom={myTheme['color-primary-600']}
+                            colorcustom={myTheme['color-primary-700']}
                             buttonStyle={
                                 {
                                     marginTop:10,
+                                    borderRadius: 20
                                 
                                 }
 
