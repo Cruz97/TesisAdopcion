@@ -8,6 +8,7 @@ import ButtonCustom from '../../components/ButtonCustom'
 import {myTheme} from '../../src/assets/styles/Theme'
 import {Autocomplete} from 'react-native-autocomplete-input'
 import { Layout } from 'react-native-ui-kitten';
+import {ImagePicker} from '../../src/components/ImagePicker'
 
 const DATA = [
     { id: 1, title: 'Star Wars', releaseYear: 1977 },
@@ -169,6 +170,9 @@ export class Publication extends Component {
                             <Picker.Item label="Bulldog" value={3} />
                         </Picker>
                         </View>
+
+
+                    <ImagePicker  />
 
                     
 
