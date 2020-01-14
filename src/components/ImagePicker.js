@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
-import * as ImgPicker from 'react-native-image-picker';
+import ImagePicker  from 'react-native-image-picker';
 import { Button, withStyles } from 'react-native-ui-kitten';
 import { Icon } from 'react-native-elements';
 import Label from './Label';
 
-class ImagePicker extends Component {
+class ImagenPicker extends Component {
   state = {
     width: 0,
     height: 0,
@@ -107,19 +107,20 @@ class ImagePicker extends Component {
 
     switch (mode) {
       case 'both':
-        ImgPicker.showImagePicker(options, this.onSelectImage.bind(this));
+        ImagePicker.showImagePicker(options, this.onSelectImage.bind(this));
         break;
       case 'photo':
-        ImgPicker.launchCamera(options, this.onSelectImage.bind(this));
+        
+        ImagePicker.launchCamera(options, this.onSelectImage.bind(this));
         break;
       case 'picture':
-        ImgPicker.launchImageLibrary(options, this.onSelectImage.bind(this));
+        ImagePicker.launchImageLibrary(options, this.onSelectImage.bind(this));
         break;
     }
   }
 }
 
-export default withStyles(ImagePicker, theme => ({
+export default withStyles(ImagenPicker, theme => ({
   colors: {
     primary: theme['color-primary-500']
   }

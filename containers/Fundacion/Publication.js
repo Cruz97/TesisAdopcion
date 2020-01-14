@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet,TextInput, Picker} from 'react-native'
+import { Text, View, StyleSheet,TextInput, Picker, Image} from 'react-native'
 
 import { SafeAreaView } from 'react-navigation'
 import { ButtonGroup} from 'react-native-elements'
@@ -8,7 +8,12 @@ import ButtonCustom from '../../components/ButtonCustom'
 import {myTheme} from '../../src/assets/styles/Theme'
 import {Autocomplete} from 'react-native-autocomplete-input'
 import { Layout } from 'react-native-ui-kitten';
-import {ImagePicker} from '../../src/components/ImagePicker'
+import ImagenPicker from '../../src/components/ImagePicker'
+import firebase from '@react-native-firebase/app'
+import auth from '@react-native-firebase/auth'
+import database from '@react-native-firebase/database'
+import storage from '@react-native-firebase/storage'
+import * as Progress from 'react-native-progress';
 
 const DATA = [
     { id: 1, title: 'Star Wars', releaseYear: 1977 },
@@ -34,10 +39,48 @@ export class Publication extends Component {
             name: '',
             raza: '',
             query: '',
-            data: DATA
+            data: DATA,
+            images: [],
+            uploadValue: 0,
+            pictureUrl: null
           }
           this.updateIndexGender = this.updateIndexGender.bind(this)
           this.updateIndexType = this.updateIndexType.bind(this)
+    }
+
+    uploadImage = () =>{
+        const img = this.state.images[0];
+        let storageRef = firebase.storage().ref('/petphotos');
+        const task = storageRef.child('/fundacion').putString(img,'base64');
+
+        task.on('state_changed',snapshot=>{
+            let percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            
+            
+
+            snapshot.ref.getDownloadURL().then((downloadURL)=>{
+                this.setState({
+                    uploadValue: percentage,
+                    pictureUrl: downloadURL
+                })
+
+            })
+        }, 
+        error => {
+            alert(error.message)
+        },
+        ()=>{
+               // snapshot.ref
+               // snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    this.setState({
+                        uploadValue: 100,
+                        //picture: downloadURL
+                    })
+                    alert(this.state.pictureUrl)
+                //
+            
+        }
+        )
     }
 
     
@@ -82,6 +125,12 @@ export class Publication extends Component {
         const regex = new RegExp(`${query.trim()}`, 'i');
         return data.filter(data => data.title.search(regex) >= 0);
       }
+
+    onChangeImages = (images) => {
+        this.setState({
+            images
+        })
+    }
       
 
     render() {
@@ -172,18 +221,13 @@ export class Publication extends Component {
                         </View>
 
 
-                    <ImagePicker  />
-
-                    
-
-                   
-                       
-
-                       
-                    
-                
-
-                 
+                    <ImagenPicker 
+                        title="Agregar imagenes de la mascota" 
+                        images={this.state.images} 
+                        onChangeImages={this.onChangeImages.bind(this)}
+                        
+                        />
+                   <Progress.Bar progress={this.state.uploadValue} width={200} />
                    <View style={{alignItems: 'center'}}>
                    <ButtonCustom  
                             title="Publicar"
@@ -199,10 +243,17 @@ export class Publication extends Component {
 
                             }
                             onPress={()=>{
+                              // alert(this.state.images.length)
+                              this.uploadImage()
                                 
                             }}
                             
                            />
+                           <Image
+                                style={{ width: 150, height: 150, borderRadius: 10 }}
+                                resizeMode={'cover'}
+                                source={{ uri: this.state.pictureUrl }}
+                                />
                    </View>
                 </View>
 
