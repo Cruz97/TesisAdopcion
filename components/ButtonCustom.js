@@ -3,17 +3,25 @@ import { StyleSheet } from 'react-native'
 import { Avatar, Icon, Input, Button, colors } from 'react-native-elements';
 import { withStyles } from 'react-native-ui-kitten';
 
-const ButtonCustom = ({onPress,title, buttonStyle, primary, secondary, bRadius,themedStyle, colorcustom, style}) => (
+const ButtonCustom = ({onPress,title, buttonStyle, icon, primary, secondary, bRadius,themedStyle, colorcustom, style}) => (
     <Button onPress={()=> {}}
             style={style}
             buttonStyle={[buttonStyle,{
                 
                 backgroundColor: primary ? themedStyle.colors.primary : colorcustom
             }]
+            
 
             }
             title={title}
+            titleStyle={{
+              marginLeft: 10
+            }}
             onPress={onPress}
+            icon = {
+             icon
+            }
+           // iconContainerStyle={{marginRight: 20}}
                         >
     </Button>
   );
@@ -29,7 +37,8 @@ const ButtonCustom = ({onPress,title, buttonStyle, primary, secondary, bRadius,t
 export default withStyles(ButtonCustom, theme => ({
     colors: {
       primary: theme['color-success-600'],
-      secondary: theme['color-primary-600']
+      secondary: theme['color-primary-600'],
+      icon: '#fff'
     }
   }));
   

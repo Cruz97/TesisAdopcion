@@ -12,12 +12,13 @@ class ImagenPicker extends Component {
     selectedIndex: -1
   };
   render() {
-    const { limit = 20, disabled, title, images = [] } = this.props;
+    const { themedStyle } = this.props;
+    const { limit = 3, disabled, title, images = [], color } = this.props;
     return (
-      <View style={{ marginBottom: '5%' }}>
+      <View style={{ marginBottom: '3%' }}>
         {title ? <Label>{title}</Label> : undefined}
         <View
-          style={{ flexWrap: 'wrap', flexDirection: 'row', marginBottom: '2%' }}
+          style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'center',marginBottom: '3%' }}
           onLayout={event => {
             const { width, height } = event.nativeEvent.layout;
             this.setState({ width, height });
@@ -27,10 +28,12 @@ class ImagenPicker extends Component {
         </View>
         {images.length < limit && !disabled ? (
           <Button
+            style={{backgroundColor: color, borderColor: color}}
             disabled={disabled}
             onPress={() => this.selectImage()}
             size={'small'}
-            icon={() => <Icon name={'photo-camera'} color={'#FFF'} size={20} />}
+            textStyle={{color: themedStyle.text.primary}}
+            icon={() => <Icon name={'photo-camera'} color={themedStyle.text.primary} size={20} />}
           >
             Añadir foto
           </Button>
@@ -122,6 +125,9 @@ class ImagenPicker extends Component {
 
 export default withStyles(ImagenPicker, theme => ({
   colors: {
-    primary: theme['color-primary-500']
+    primary: theme['color-primary-700']
+  },
+  text:{
+    primary: theme['color-material-primary-400']
   }
 }));
