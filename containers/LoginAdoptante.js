@@ -39,10 +39,10 @@ export class LoginAdoptante extends Component {
     
     
     this.state = {
-        //usuario: 'josecruz@outlook.com',
-        //contrasena: 'abc123',
-        usuario: '',
-        contrasena: '',
+        usuario: 'josecruz@outlook.com',
+        contrasena: 'abc123',
+        // usuario: '',
+        // contrasena: '',
         // usuario: 'josecruz@outlook.com',
         // contrasena: 'abc123',
         

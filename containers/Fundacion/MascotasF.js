@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList } from 'react-native'
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import {Image,Icon} from 'react-native-elements'
 import ActionButton from 'react-native-action-button'
@@ -30,37 +30,79 @@ export class MascotasF extends Component {
 
     constructor(props){
         super(props);
-        this.state={
-            selected:'',
-            fundaciones: []
-        }
-    }
-    componentDidMount(){
-        let arrayfoundation = []
-        let refFoundation = firebase.database().ref('fundaciones')
-        refFoundation.on('value',snapshot => {
+        const fundacion = firebase.auth().currentUser;
+        let arraymascotas = []
+        let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
+        refFoundation.once('value',snapshot => {
          //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
          snapshot.forEach((data)=>{
-             let fundacion = data.val()
-             arrayfoundation.push(fundacion)
+             let mascota = data.val()
+             arraymascotas.push(mascota)
              // alert(JSON.stringify(data.val(),null,4))
          })
+
+         //alert(JSON.stringify(arrayfoundation,null,4))
+    
+        //  this.setState ( {
+        //      mascotas: Array.from(arraymascotas)
+        //  })
+        //  alert(JSON.stringify(arrayfoundation,null,4))
+        })
+        this.state={
+            selected:'',
+            mascotas: arraymascotas
+        }
+    }
+
+    // componentDidUpdate(prevProps){
+    //     if(this.state.mascotas !== prevProps.mascotas){
+    //         //this.setState({mascotas: prevProps.mascotas})
+    //     }
+    //     else{
+    //         this.setState({mascotas: []})
+    //     }
+    // }
+
+    componentDidMount(){
+        const fundacion = firebase.auth().currentUser;
+        let arraymascotas = []
+        let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
+        refFoundation.on('child_added',snapshot => {
+           // alert(JSON.stringify(snapshot,null,4))
+            arraymascotas.push(snapshot.val())
+         //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
+        //  snapshot.forEach((data)=>{
+        //      let mascota = data.val()
+        //      arraymascotas.push(mascota)
+        //      // alert(JSON.stringify(data.val(),null,4))
+        //  })
+
+         //alert(JSON.stringify(arrayfoundation,null,4))
     
          this.setState ( {
-             fundaciones: arrayfoundation
+             mascotas: Array.from(arraymascotas)
          })
         //  alert(JSON.stringify(arrayfoundation,null,4))
         })
+       
+        
+    }
+
+
+
+    _keyExtractor = item => item.name;
     
-       }
+    _renderItem = ({ item }) => this.renderItemPet(item)
+    
     render() {
-        const fundaciones = Array.from(this.state.fundaciones)
+        //const mascotas = Array.from(this.state.mascotas)
+
         return (
         <View style={{flex:1}}>
-            <ScrollView style={{flex:1}}>
-            <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'center'}}>
+            {/* <ScrollView style={{flex:1}}> */}
+            {/* <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'center'}}>
             {
-                    fundaciones.map((item)=>{
+                    mascotas.map((item)=>{
                        return(
                            
                                 this.renderItem(item)
@@ -68,28 +110,27 @@ export class MascotasF extends Component {
                        )
                     })
                 }
-                 </View>
-                {/* <Selection  
-                items={dropdownlist} 
-                title='Tipos' 
-                selectedKey={false}   
-                selectedValue={this.state.selected}  
-                showValue={false}
-                onValueChange={(itemValue, itemIndex) => {
-                    this.setState({
-                      selected: itemValue
-                    })
-                   
-                }} */}
-               
-                {/* /> */}
-            </ScrollView>
+                 </View> */}
+
+                 
+                     <FlatList
+                     style={{flex:1}}
+                     data={this.state.mascotas}
+                     keyExtractor={this._keyExtractor}     //has to be unique   
+                     renderItem={this._renderItem} //method to render the data in the way you want using styling u need
+                     horizontal={false}
+                     numColumns={2}
+                               />
+                    
+
+            
             <ActionButton
                     buttonColor={myTheme['color-primary-700']}
-                    onPress={() => this.props.navigation.navigate('Publication') }
+                    onPress={() => this.props.navigation.push('Publication') }
                     
                     position='right'
                     offsetX={10}
+                    offsetY={5}
                     
                     />
             
@@ -97,22 +138,31 @@ export class MascotasF extends Component {
         )
     }
 
-    renderItem = (item) => {
+    renderItemPet = (item) => {
         
         return(
             <View style={style.boxitem}>
            
         <View style={style.item}>
 
-        
+            {/* <TouchableOpacity> */}
                <View style={[style.boximg]}>
                        <TouchableOpacity style={{width: '100%', height: '100%'}} onPress={()=> {}} >
-                           <Image style={style.img} source={{uri: item.img}}  />
+                           <Image style={style.img} source={{uri: item.picture}}  />
                        </TouchableOpacity>
                </View>
-               <View style={style.boxinfo}>
-                    <Text style={style.title}>Nombre Mascota</Text>
+              
+              <View style={style.boxinfo}>
+                    <Text style={style.title}>{item.name}</Text>
+                    <TouchableOpacity style={{marginRight: 10}}>
+                        <Icon name='edit' size={26} color={myTheme['color-material-primary-400']} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Icon name='delete-sweep' size={26} color={myTheme['color-material-primary-400']} />
+                    </TouchableOpacity>
                </View>
+              
+               {/* </TouchableOpacity> */}
                
                
 
@@ -125,6 +175,7 @@ export class MascotasF extends Component {
 const style = StyleSheet.create({
     container:{
         flex:1,
+        
         // backgroundColor: 'red'
         // backgroundColor: '#f2f2f2',
         //paddingBottom: 40
@@ -133,20 +184,23 @@ const style = StyleSheet.create({
         //flex:2,
         // backgroundColor: 'blue',    
         //height: 250,
-        width: '33%'
+        width: '50%',
+        //marginHorizontal: 10,
+        
     },
     item:{
-        flex: 2,
+        //flex: 2,
        // width: '100%',
         flexDirection: 'column',
-        marginBottom: 20,
-        marginLeft: 5,
-        marginRight:5,
+        marginBottom: 5,
+        //marginLeft: 15,
+        //marginRight:15,
         marginTop: 10,
-        borderRadius: 20,
+        marginHorizontal: '5%',
+        borderRadius: 5,
         //resizeMode: 'c',
         overflow: 'hidden',
-        height: 190,
+        height: 210,
         //width: '30%',
         borderColor: 'rgba(0,0,0,0.6)',
         backgroundColor: '#fff',
@@ -163,11 +217,19 @@ const style = StyleSheet.create({
        },
        boximg:{
         width: '100%',
-        height: 150
+        height: 160,
+       
         
        },
        boxinfo:{
-        //flex:1,
+           
+        // flex:1,
+        paddingVertical:10,
+        paddingHorizontal: 10,
+        
+        flexDirection: 'row',
+        //backgroundColor: myTheme['color-primary-600'],
+        justifyContent: 'flex-start',
         //paddingBottom: 60,
         //marginTop: 10
        },
@@ -178,9 +240,14 @@ const style = StyleSheet.create({
         
        },
        title:{
+           flex:1,
         fontWeight: 'bold',
         fontSize: 15,
-        textAlign: 'center',
+        textAlign: 'left',
+        marginHorizontal: 10,
+        color: myTheme['color-material-primary-500']
+        //color: '#FFF'
+       
         //marginTop: 5,
         //marginBottom: 10
     },
@@ -188,8 +255,8 @@ const style = StyleSheet.create({
         fontSize: 13,
         textAlign: 'left',
         marginTop: 5,
-        marginLeft: 10,
-        marginRight: 10
+        marginLeft: 5,
+        marginRight: 5
     },
 })
 

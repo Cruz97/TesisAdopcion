@@ -16,7 +16,7 @@ import storage from '@react-native-firebase/storage'
 import * as Progress from 'react-native-progress';
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Dialog } from 'react-native-simple-dialogs';
-
+import AlertCustom from '../../components/AlertCustom';
 
 
 const DATA = [
@@ -58,6 +58,161 @@ export class Publication extends Component {
           this.updateIndexGender = this.updateIndexGender.bind(this)
           this.updateIndexType = this.updateIndexType.bind(this)
     }
+
+    savePetPublish = () => {
+        const {name, especie, genero, color, edad, description, typepublish} = this.state;
+        const imagen = this.state.images[0];    
+        const fundacion = firebase.auth().currentUser;
+
+        var storageRef = firebase.storage().ref();
+        var uploadTask = storageRef.child('petphotos/'+fundacion.uid+'/'+name).putString(imagen, 'base64');
+        
+       // let storageRef = firebase.storage().ref('petphotos/'+fundacion.uid+'/'+name);
+        //storageRef.putString(imagen,'base64');
+        // Listen for state changes, errors, and completion of the upload.
+            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+           (snapshot) => {
+                
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            if(progress == 100){
+                snapshot.ref.getDownloadURL().then((valueImageUrl)=>{
+                    let refPublish = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+name);
+                    refPublish.set({
+                        name: name,
+                        picture: valueImageUrl,
+                        spice: especie,
+                        gender: genero,
+                        color: color,
+                        age: edad,
+                        description: description,
+                        typepublish: typepublish
+                    }).then(()=>{
+                        setTimeout(() => {
+                        
+                            this.setState({
+                                //uploadValue: 100,
+                                modalVisible: true
+                                //picture: downloadURL
+                            })
+
+                        }, 1000);
+
+
+                    }).catch(error=>{
+                        alert(error.message)
+            });
+                }).catch((error)=>{
+                    alert(error.message)
+                })
+            }
+            this.setState({uploadValue: progress})
+            //alert('Upload is ' + progress + '% done');
+            // switch (snapshot.state) {
+            //     case firebase.storage.TaskState.PAUSED: // or 'paused'
+            //     alert('Upload is paused');
+            //     break;
+            //     case firebase.storage.TaskState.RUNNING: // or 'running'
+            //     alert('Upload is running');
+            //     break;
+            // }
+            }, (error)=> {
+
+            // A full list of error codes is available at
+            // https://firebase.google.com/docs/storage/web/handle-errors
+           alert(error.code +' => '+error.message)
+            }, ()=> {
+            // Upload completed successfully, now we can get the download URL
+                // uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                //     alert(downloadURL)
+                // });
+             
+        })
+
+
+
+
+        // task.on('state_changed',snapshot=>{
+        //     let percentage = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) ;
+        //     //alert(percentage)
+        //     let n = percentage/100;
+        //     let value = 0;
+        //    // alert(snapshot.totalBytes )
+        //    for(let i=0; i<n; i++){
+              
+        //        value = value+n;
+        //       // alert()
+        //        // setTimeout(()=>{
+        //             this.setState({
+        //                 uploadValue: value,
+        //                 //pictureUrl: downloadURL
+        //             })
+        //            //},1000)
+
+        //     }
+
+        //     snapshot.ref.getDownloadURL().then(downloadURL => {
+                
+        //     let refPublish = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+name);
+        //     refPublish.set({
+        //         name: name,
+        //         picture: downloadURL,
+        //         spice: especie,
+        //         gender: genero,
+        //         color: color,
+        //         age: edad,
+        //         description: description,
+        //         typepublish: typepublish
+        //     }).then(()=>{
+        //         setTimeout(() => {
+        //             this.setState({
+        //                 //uploadValue: 100,
+        //                 modalVisible: true
+        //                 //picture: downloadURL
+        //             })
+
+        //         }, 1000);
+
+
+        //     }).catch(error=>{
+        //         alert(error.message)
+        //     })
+
+        //     }).catch(error => {
+        //         alert(error.message)
+        //     })
+        //                 //snapshot.ref.getDownloadURL().then((downloadURL)=>{
+              
+
+        //    // })
+
+
+        // }, 
+        // error => {
+        //     alert(error.message)
+        // },
+        // ()=>{
+
+
+        //        // snapshot.ref
+        //        // snapshot.ref.getDownloadURL().then((downloadURL) => {
+        //             // setTimeout(() => {
+        //             //     this.setState({
+        //             //         //uploadValue: 100,
+        //             //         modalVisible: true
+        //             //         //picture: downloadURL
+        //             //     })
+
+        //             // }, 1000);
+        //             //alert(this.state.pictureUrl)
+        //         //
+            
+        // }
+        // )
+
+       
+    }
+
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
@@ -105,7 +260,7 @@ export class Publication extends Component {
                             //picture: downloadURL
                         })
 
-                    }, 3000);
+                    }, 1000);
                     //alert(this.state.pictureUrl)
                 //
             
@@ -113,6 +268,7 @@ export class Publication extends Component {
         )
     }
 
+ 
     
 
     updateIndexGender (selectedIndexGender) {
@@ -140,14 +296,14 @@ export class Publication extends Component {
     }
 
     handleColor = (value) => {
-        alert(value)
+        //alert(value)
         this.setState({
             color: value
         })
     }
 
     handleTypePublish= (value) => {
-        alert(value)
+        //alert(value)
         this.setState({
             typepublish: value
         })
@@ -194,52 +350,21 @@ export class Publication extends Component {
         const { selectedIndexType } = this.state
         return (
             <View style={style.main}>
+                <AlertCustom 
+                    modalVisible={this.state.modalVisible}
+                    onBackdropPress={()=>{this.setState({modalVisible: false}); this.props.navigation.navigate('MascotasF')}}
+                    source={require('../../assets/img/successgif.gif')}
+                    title='Genial!'
+                    subtitle='La publicación se ha realizado con éxito'
+                    textButton='Aceptar'
+                    onPress={()=>{
+                        this.setModalVisible(false)
+                        this.props.navigation.navigate('MascotasF')
+                    }}
 
+                />
 
-            <Overlay
-            isVisible={this.state.modalVisible}
-            windowBackgroundColor="rgba(0, 0, 0, .6)"
-            overlayBackgroundColor="white"
-            width={250}
-            height="auto"
-            overlayStyle={{paddingHorizontal:0, paddingVertical:0, borderRadius: 10}}
-            >
-             <View style={{paddingHorizontal: 30, paddingVertical: 15, alignItems: 'center'}}>
-             <Image
-                        source={require('../../assets/img/successgif.gif')}
-                        style={{resizeMode: 'stretch',
-                        height: 150,
-                        width: 180,
-                        marginTop: 10}
-                    }
-                    />
-                    <View style={{alignItems: 'center', marginTop: 20}}>
-                        <Text style={{color: myTheme['color-material-primary-700'], fontWeight: 'bold', fontSize: 18}}>Genial!</Text>
-                    </View>
-
-                    <View style={{alignItems: 'center', marginVertical: 5}}>
-                        <Text style={{color: myTheme['color-material-primary-300'], textAlign: 'center', fontWeight: 'bold', fontSize: 15}}>La publicación se ha realizado con éxito</Text>
-                    </View>
-
-                   
-                    
-             </View>
-             <TouchableOpacity style={{height: 50, width: '100%', justifyContent: 'center', borderBottomStartRadius: 10, borderBottomEndRadius: 10, backgroundColor: myTheme['color-material-info-600']}}
-             onPress={()=>{
-                 this.setModalVisible(false)
-                 this.props.navigation.navigate('MascotasF')
-             }}
-             >
-                <View style={{alignItems: 'center',justifyContent:'center'}}>
-                            <Text style={{color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 15}}>Aceptar</Text>
-                        </View>
-
-                    </TouchableOpacity>
-
-           
-                
-            </Overlay>
-
+        
                 <KeyboardAwareScrollView>
                 <View style={style.form}>
                 
@@ -409,8 +534,8 @@ export class Publication extends Component {
                                 }}
                             onPress={()=>{
                               // alert(this.state.images.length)
-                              this.uploadImage()  ;
-                             
+                             //this.uploadImage()  ;
+                             this.savePetPublish()
                               //this.setModalVisible(true) 
                             }}
                             
