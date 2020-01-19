@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList, PickerIOSItem } from 'react-native'
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import {Image,Icon} from 'react-native-elements'
 import ActionButton from 'react-native-action-button'
@@ -69,7 +69,7 @@ export class MascotasF extends Component {
         let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
         refFoundation.on('child_added',snapshot => {
            // alert(JSON.stringify(snapshot,null,4))
-            arraymascotas.push(snapshot.val())
+            arraymascotas.push({key: snapshot.key,value: snapshot.val()})
          //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
         //  snapshot.forEach((data)=>{
         //      let mascota = data.val()
@@ -84,13 +84,42 @@ export class MascotasF extends Component {
          })
         //  alert(JSON.stringify(arrayfoundation,null,4))
         })
+
+        refFoundation.on('child_changed',snapshot => {
+            // alert(JSON.stringify(snapshot,null,4))
+            //alert('algo cambio')
+            let arrayAcual = this.state.mascotas;
+            arrayAcual.map((item,index)=>{
+                if(item.key === snapshot.key){
+                    //alert('encontro el key :'+item.key+' => '+snapshot.key)
+                    arrayAcual[index] = {key: snapshot.key, value: snapshot.val()}
+                }
+            })
+            this.setState({mascotas: arrayAcual})
+
+            //alert(JSON.stringify(snapshot,null,4))
+            //  arraymascotas.push({key: snapshot.key,value: snapshot.val()})
+          //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
+         //  snapshot.forEach((data)=>{
+         //      let mascota = data.val()
+         //      arraymascotas.push(mascota)
+         //      // alert(JSON.stringify(data.val(),null,4))
+         //  })
+ 
+          //alert(JSON.stringify(arrayfoundation,null,4))
+     
+        //   this.setState ( {
+        //       mascotas: Array.from(arraymascotas)
+        //   })
+         //  alert(JSON.stringify(arrayfoundation,null,4))
+         })
        
         
     }
 
 
 
-    _keyExtractor = item => item.name;
+    _keyExtractor = item => item.key;
     
     _renderItem = ({ item }) => this.renderItemPet(item)
     
@@ -139,7 +168,7 @@ export class MascotasF extends Component {
     }
 
     renderItemPet = (item) => {
-        
+        const {key,value} = item;
         return(
             <View style={style.boxitem}>
            
@@ -147,14 +176,18 @@ export class MascotasF extends Component {
 
             {/* <TouchableOpacity> */}
                <View style={[style.boximg]}>
-                       <TouchableOpacity style={{width: '100%', height: '100%'}} onPress={()=> {}} >
-                           <Image style={style.img} source={{uri: item.picture}}  />
+                       <TouchableOpacity style={{width: '100%', height: '100%'}} onPress={()=> {alert(key)}} >
+                           <Image style={style.img} source={{uri: value.picture}}  />
                        </TouchableOpacity>
                </View>
               
               <View style={style.boxinfo}>
-                    <Text style={style.title}>{item.name}</Text>
-                    <TouchableOpacity style={{marginRight: 10}}>
+                    <Text style={style.title}>{value.name}</Text>
+                    <TouchableOpacity style={{marginRight: 10}}
+                        onPress={()=>{
+                            this.props.navigation.navigate('Publication',{pet: item, action: 'edit'})
+                        }}
+                    >
                         <Icon name='edit' size={26} color={myTheme['color-material-primary-400']} />
                     </TouchableOpacity>
                     <TouchableOpacity>

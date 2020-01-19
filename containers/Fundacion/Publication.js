@@ -17,6 +17,8 @@ import * as Progress from 'react-native-progress';
 import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Dialog } from 'react-native-simple-dialogs';
 import AlertCustom from '../../components/AlertCustom';
+import LoadingCustom from '../../components/LoadingCustom';
+
 
 
 const DATA = [
@@ -37,14 +39,20 @@ export class Publication extends Component {
 
     constructor(props){
         super(props)
+       
+      
+
         this.state = {
             selectedIndexGender: -1,
             selectedIndexType: -1,
-            especie: '',
-            genero: '',
-            name: 'Skilled',
-            description: 'Skilled es una mascota muy amigable, le gusta pasear por las mañanas, le encantan las croquetas, y jugar con los balones ',
-            edad: '8 meses',
+            especie: null,
+            genero: null,
+            // name: 'Skilled',
+            // description: 'Skilled es una mascota muy amigable, le gusta pasear por las mañanas, le encantan las croquetas, y jugar con los balones ',
+            // edad: '8 meses',
+            name:'',
+            description: '',
+            edad: '',
             raza: '',
             color: '',
             typepublish: '',
@@ -54,161 +62,166 @@ export class Publication extends Component {
             uploadValue: 0,
             pictureUrl: null,
             modalVisible: false,
+            loadVisible: false,
+            action: '',
+            key: null
           }
           this.updateIndexGender = this.updateIndexGender.bind(this)
           this.updateIndexType = this.updateIndexType.bind(this)
     }
 
+    componentDidMount(){
+        const {navigation} = this.props;
+        let pet = navigation.getParam('pet',null)
+        //alert(JSON.stringify(pet,null,4))
+        let action = navigation.getParam('action',null)
+        var image = null
+
+
+        
+        //alert(image)
+        //let name = ''
+        if(action === null && pet === null){
+            this.setState({
+                action: 'create',
+                key: null
+            })
+        }else{
+
+            let spice = parseInt(pet.value.spice);
+            let gender = parseInt(pet.value.gender);
+            let description = pet.value.description;
+            let color = pet.value.color;
+            let age = pet.value.age;
+            let typepublish = pet.value.typepublish;
+            //alert(spice+ ' => '+gender)
+            //alert(description)
+            var xhr = new XMLHttpRequest()
+            xhr.open("GET", pet.value.picture);
+            xhr.responseType = "blob";
+            xhr.send();
+            xhr.addEventListener("load", ()=> {
+                var reader = new FileReader();
+                reader.readAsDataURL(xhr.response); 
+                reader.addEventListener("loadend", ()=> {             
+                    //alert(reader.result);
+                    var images = [];
+                    
+                    var r = reader.result.replace('data:application/octet-stream;base64,','')
+                    images.push(r)
+                    // alert(r)
+                    this.setState({
+                        images,
+                        
+
+                    })
+                });
+            });
+            //this.updateIndexGender(gender)
+            this.setState({
+                action: action,
+                name: pet.value.name,
+                description,
+                edad: age,
+                selectedIndexGender: gender,
+                selectedIndexType: spice,
+                color,
+                typepublish, 
+                key: pet.key
+                //pet
+           })
+        }
+
+        //alert(this.state.images.length)
+       
+        // if(action === null && pet === null){
+        //     this.setState({
+        //         action: 'create'
+        //     })
+        // }else{
+        //     this.setState({
+        //         action: action,
+        //         name: pet.value.name,
+        //         //pet
+        //     })
+        // }
+
+    }
+
     savePetPublish = () => {
-        const {name, especie, genero, color, edad, description, typepublish} = this.state;
+        const {name, especie, genero, color, edad, description, typepublish, selectedIndexGender, selectedIndexType} = this.state;
         const imagen = this.state.images[0];    
         const fundacion = firebase.auth().currentUser;
+        let date = new Date();
+        var storageRef = firebase.storage().ref('/petphotos/'+fundacion.uid+'/'+date+'_'+name);
+        //alert(storageRef)
 
-        var storageRef = firebase.storage().ref();
-        var uploadTask = storageRef.child('petphotos/'+fundacion.uid+'/'+name).putString(imagen, 'base64');
-        
-       // let storageRef = firebase.storage().ref('petphotos/'+fundacion.uid+'/'+name);
-        //storageRef.putString(imagen,'base64');
-        // Listen for state changes, errors, and completion of the upload.
-            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-           (snapshot) => {
+        if(this.state.key != null){
+            let refEditPublish = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+this.state.key);
+                   
+            refEditPublish.update({
+                name: name,
+                //picture: imageUrl,
+                spice: selectedIndexType,
+                gender: selectedIndexGender,
+                color: color,
+                age: edad,
+                description: description,
+                typepublish: typepublish
+            }).then(()=>{
+               // setTimeout(() => {
                 
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            if(progress == 100){
-                snapshot.ref.getDownloadURL().then((valueImageUrl)=>{
-                    let refPublish = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+name);
-                    refPublish.set({
-                        name: name,
-                        picture: valueImageUrl,
-                        spice: especie,
-                        gender: genero,
-                        color: color,
-                        age: edad,
-                        description: description,
-                        typepublish: typepublish
-                    }).then(()=>{
-                        setTimeout(() => {
-                        
-                            this.setState({
-                                //uploadValue: 100,
-                                modalVisible: true
-                                //picture: downloadURL
-                            })
+                    this.setState({
+                        loadVisible: false,
+                        modalVisible: true
+                    })
 
-                        }, 1000);
-
-
-                    }).catch(error=>{
-                        alert(error.message)
+            }).catch(error=>{
+                alert(error.message)
             });
-                }).catch((error)=>{
+
+            return;
+        }
+        
+        let task = storageRef.putString(imagen,'base64');
+        task.on('state_changed', (taskSnapshot) => {
+            var progress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100;
+            this.setState({loadVisible: true,uploadValue: progress})
+          });
+
+        
+           
+          task.then(() => {
+            storageRef.getDownloadURL().then((imageUrl)=>{
+                let refPublish = firebase.database().ref('publicaciones/'+fundacion.uid);
+                   
+                refPublish.push({
+                    name: name,
+                    picture: imageUrl,
+                    spice: especie,
+                    gender: genero,
+                    color: color,
+                    age: edad,
+                    description: description,
+                    typepublish: typepublish
+                }).then(()=>{
+                   // setTimeout(() => {
+                    
+                        this.setState({
+                            loadVisible: false,
+                            modalVisible: true
+                        })
+
+                }).catch(error=>{
                     alert(error.message)
-                })
-            }
-            this.setState({uploadValue: progress})
-            //alert('Upload is ' + progress + '% done');
-            // switch (snapshot.state) {
-            //     case firebase.storage.TaskState.PAUSED: // or 'paused'
-            //     alert('Upload is paused');
-            //     break;
-            //     case firebase.storage.TaskState.RUNNING: // or 'running'
-            //     alert('Upload is running');
-            //     break;
-            // }
-            }, (error)=> {
-
-            // A full list of error codes is available at
-            // https://firebase.google.com/docs/storage/web/handle-errors
-           alert(error.code +' => '+error.message)
-            }, ()=> {
-            // Upload completed successfully, now we can get the download URL
-                // uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                //     alert(downloadURL)
-                // });
-             
-        })
-
-
-
-
-        // task.on('state_changed',snapshot=>{
-        //     let percentage = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) ;
-        //     //alert(percentage)
-        //     let n = percentage/100;
-        //     let value = 0;
-        //    // alert(snapshot.totalBytes )
-        //    for(let i=0; i<n; i++){
-              
-        //        value = value+n;
-        //       // alert()
-        //        // setTimeout(()=>{
-        //             this.setState({
-        //                 uploadValue: value,
-        //                 //pictureUrl: downloadURL
-        //             })
-        //            //},1000)
-
-        //     }
-
-        //     snapshot.ref.getDownloadURL().then(downloadURL => {
-                
-        //     let refPublish = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+name);
-        //     refPublish.set({
-        //         name: name,
-        //         picture: downloadURL,
-        //         spice: especie,
-        //         gender: genero,
-        //         color: color,
-        //         age: edad,
-        //         description: description,
-        //         typepublish: typepublish
-        //     }).then(()=>{
-        //         setTimeout(() => {
-        //             this.setState({
-        //                 //uploadValue: 100,
-        //                 modalVisible: true
-        //                 //picture: downloadURL
-        //             })
-
-        //         }, 1000);
-
-
-        //     }).catch(error=>{
-        //         alert(error.message)
-        //     })
-
-        //     }).catch(error => {
-        //         alert(error.message)
-        //     })
-        //                 //snapshot.ref.getDownloadURL().then((downloadURL)=>{
-              
-
-        //    // })
-
-
-        // }, 
-        // error => {
-        //     alert(error.message)
-        // },
-        // ()=>{
-
-
-        //        // snapshot.ref
-        //        // snapshot.ref.getDownloadURL().then((downloadURL) => {
-        //             // setTimeout(() => {
-        //             //     this.setState({
-        //             //         //uploadValue: 100,
-        //             //         modalVisible: true
-        //             //         //picture: downloadURL
-        //             //     })
-
-        //             // }, 1000);
-        //             //alert(this.state.pictureUrl)
-        //         //
-            
-        // }
-        // )
+                });
+            }).catch((error)=>{
+                alert(error.message);
+            })
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
 
        
     }
@@ -364,6 +377,8 @@ export class Publication extends Component {
 
                 />
 
+                <LoadingCustom loadVisible={this.state.loadVisible} progress={this.state.uploadValue}  />
+
         
                 <KeyboardAwareScrollView>
                 <View style={style.form}>
@@ -507,12 +522,12 @@ export class Publication extends Component {
 
                    
                    <View style={{marginVertical: 10, alignItems: 'center'}}>
-                   <Progress.Bar 
+                   {/* <Progress.Bar 
                    progress={this.state.uploadValue}  
                    width={320}  
                    height={10}
                    color={themedStyle.progress.primary}
-                   />
+                   /> */}
                    {/* <Progress.Circle size={120} progress={this.state.uploadValue} indeterminate={false} /> */}
                    {/* <Progress.Pie progress={this.state.uploadValue} size={70} /> */}
                    </View>
