@@ -93,7 +93,7 @@ export class Publication extends Component {
             let description = pet.value.description;
             let color = pet.value.color;
             let age = pet.value.age;
-            let typepublish = pet.value.typepublish;
+            //let typepublish = pet.value.typepublish;
             //alert(spice+ ' => '+gender)
             //alert(description)
             var xhr = new XMLHttpRequest()
@@ -126,7 +126,7 @@ export class Publication extends Component {
                 selectedIndexGender: gender,
                 selectedIndexType: spice,
                 color,
-                typepublish, 
+                //typepublish, 
                 key: pet.key
                 //pet
            })
@@ -167,7 +167,7 @@ export class Publication extends Component {
                 color: color,
                 age: edad,
                 description: description,
-                typepublish: typepublish
+                //typepublish: typepublish
             }).then(()=>{
                // setTimeout(() => {
                 
@@ -358,7 +358,7 @@ export class Publication extends Component {
         const data = this._filterData(query);
        
         const buttonsGender = ['Hembra', 'Macho']
-        const buttonsType = ['Perro', 'Gato']
+        const buttonsType = ['Canina', 'Felina']
         const { selectedIndexGender } = this.state
         const { selectedIndexType } = this.state
         return (
@@ -377,7 +377,7 @@ export class Publication extends Component {
 
                 />
 
-                <LoadingCustom loadVisible={this.state.loadVisible} progress={this.state.uploadValue}  />
+                <LoadingCustom  loadVisible={this.state.loadVisible} progress={this.state.uploadValue}  />
 
         
                 <KeyboardAwareScrollView>
@@ -386,25 +386,26 @@ export class Publication extends Component {
                         
                         {/* <View style={style.boxinput}> */}
 
-                          
+                        <Text style={{marginVertical: 10, fontWeight: 'bold' ,color: themedStyle.text.primary}}>
+                            Nombre de la mascota</Text>
                         <TextInput style = {[style.input,{ borderColor: themedStyle.colors.primary,}]}
                             value={this.state.name}
                             returnKeyType='next'
                             underlineColorAndroid = "transparent"
-                            placeholder = "Nombre de la mascota"
+                            //placeholder = "Nombre de la mascota"
                             placeholderTextColor = {themedStyle.text.primary}
                             autoCapitalize = "none"
                             onChangeText = {this.handleName}/>
 
                         <Text style={{marginVertical: 10, fontWeight: 'bold' ,color: themedStyle.text.primary}}>
-                            Fotos de la mascota</Text>
+                            Foto de la mascota</Text>
                        <View style={{borderWidth:1, borderColor: myTheme['color-material-primary-300'], padding: 10, borderRadius: 10, marginTop: 0}}>
                        <ImagenPicker 
                        color={myTheme['color-material-primary-200']}
                         //title="Agregar imagenes de la mascota" 
                         images={this.state.images} 
                         onChangeImages={this.onChangeImages.bind(this)}
-                        limit={3}
+                        limit={1}
                         
                         />
                        </View>
@@ -442,7 +443,19 @@ export class Publication extends Component {
 
                     </View>
 
-<View style={{borderWidth:1, borderColor: myTheme['color-material-primary-300'], borderRadius: 10, marginVertical: 10}}>
+                    <Text style={{marginVertical: 10, fontWeight: 'bold' ,color: themedStyle.text.primary}}>
+                            Color/es</Text>
+                    
+                            <TextInput style = {[style.input,{ borderColor: themedStyle.colors.primary,}]}
+                            value={this.state.color}
+                            returnKeyType='next'
+                            underlineColorAndroid = "transparent"
+                            //placeholder = "Nombre de la mascota"
+                            placeholderTextColor = {themedStyle.text.primary}
+                            autoCapitalize = "none"
+                            onChangeText = {this.handleColor}/>
+
+{/* <View style={{borderWidth:1, borderColor: myTheme['color-material-primary-300'], borderRadius: 10, marginVertical: 10}}>
                      <View style={[style.boxList,{justifyContent: 'space-between'}]}>
                     <Text style={[style.label,{marginLeft: '6%'}]}>Color</Text>
                         <Picker
@@ -462,7 +475,7 @@ export class Publication extends Component {
                             <Picker.Item label="Cafe" value="Cafe"  />
                         </Picker>
                         </View>
-                        </View>
+                        </View> */}
 
 
                         <Text style={{marginVertical: 10, fontWeight: 'bold' ,color: themedStyle.text.primary}}>
@@ -490,13 +503,13 @@ export class Publication extends Component {
                             numberOfLines={10}
                             textAlignVertical='top'
                             textAlign='left'
-                            placeholder = "Nombre de la mascota"
+                            //placeholder = "Nombre de la mascota"
                             placeholderTextColor = {themedStyle.text.primary}
                             autoCapitalize = "none"
                             value={this.state.description}
                             onChangeText = {this.handleDescription}/>
                      
-                     
+{/*                      
                     <View style={{borderWidth:1, borderColor: myTheme['color-material-primary-300'], borderRadius: 10, marginVertical: 10}}>
                      <View style={style.boxList}>
                     <Text style={style.label}>Publicar como: </Text>
@@ -514,10 +527,9 @@ export class Publication extends Component {
                             <Picker.Item label=" ** Seleccione el tipo de publicación **" value="null" />
                             <Picker.Item label="Adopción" value="Adopción" />
                             <Picker.Item label="Perdida" value="Perdida" />
-                            {/* <Picker.Item label="Cafe" value={4} /> */}
                         </Picker>
                         </View>
-                        </View>
+                        </View> */}
 
 
                    
@@ -531,7 +543,9 @@ export class Publication extends Component {
                    {/* <Progress.Circle size={120} progress={this.state.uploadValue} indeterminate={false} /> */}
                    {/* <Progress.Pie progress={this.state.uploadValue} size={70} /> */}
                    </View>
-                   <View style={{alignItems: 'center'}}>
+
+                </View>
+                <View style={{alignItems: 'center', width: '100%'}}>
                    <ButtonCustom  
                             title="Publicar"
                             icon = {
@@ -543,7 +557,8 @@ export class Publication extends Component {
                                 {
                                     marginTop:10,
                                     borderRadius: 0,
-                                    width: 200,   
+                                    width: 200,
+                                    marginBottom: 20   
 
                                 
                                 }}
@@ -561,7 +576,6 @@ export class Publication extends Component {
                                 source={{ uri: this.state.pictureUrl }}
                                 /> */}
                    </View>
-                </View>
                 </KeyboardAwareScrollView>
 
                
@@ -601,7 +615,7 @@ const style = StyleSheet.create({
         fontSize: 17,
         color: myTheme['color-primary-700'],
         //margin: 10,
-        marginTop: 10,
+        marginTop: 5,
       height: 40,
       width: '100%',
      

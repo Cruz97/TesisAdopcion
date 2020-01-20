@@ -8,6 +8,7 @@ import Selection from '../../src/components/Selection'
 import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
+import AlertDeleteCustom from '../../components/AlertDeleteCustom';
 
 
 const dropdownlist = [
@@ -30,27 +31,42 @@ export class MascotasF extends Component {
 
     constructor(props){
         super(props);
-        const fundacion = firebase.auth().currentUser;
-        let arraymascotas = []
-        let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
-        refFoundation.once('value',snapshot => {
-         //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
-         snapshot.forEach((data)=>{
-             let mascota = data.val()
-             arraymascotas.push(mascota)
-             // alert(JSON.stringify(data.val(),null,4))
-         })
+        //const fundacion = firebase.auth().currentUser;
+        //let arraymascotas = []
+        //let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
 
-         //alert(JSON.stringify(arrayfoundation,null,4))
-    
-        //  this.setState ( {
-        //      mascotas: Array.from(arraymascotas)
+        // refFoundation.on('value',snapshot => {
+        //     snapshot.forEach((data)=>{
+        //         let mascota = data.val()
+        //         arraymascotas.push({key: data.key, value: mascota})
+        //     })  
+        //     // this.setState ( {
+        //     //     mascotas: Array.from(arraymascotas)
+        //     // })
+        //    })
+  
+
+        //alert('constructor')
+        // refFoundation.once('value',snapshot => {
+        //  //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
+        //  snapshot.forEach((data)=>{
+        //      let mascota = data.val()
+        //      arraymascotas.push(mascota)
+        //      // alert(JSON.stringify(data.val(),null,4))
         //  })
-        //  alert(JSON.stringify(arrayfoundation,null,4))
-        })
+
+        //  //alert(JSON.stringify(arrayfoundation,null,4))
+    
+        // //  this.setState ( {
+        // //      mascotas: Array.from(arraymascotas)
+        // //  })
+        // //  alert(JSON.stringify(arrayfoundation,null,4))
+        // })
         this.state={
             selected:'',
-            mascotas: arraymascotas
+            mascotas: [],
+            modalVisible: false, 
+            key: ''
         }
     }
 
@@ -62,62 +78,110 @@ export class MascotasF extends Component {
     //         this.setState({mascotas: []})
     //     }
     // }
+    // componentWillUpdate(nextProps, nextState) {
+    //     if (nextState.mascotas.length != this.state.mascotas.length) {
+    //         //alert('son distintas')
+    //         this.state.mascotas = []
+    //         // const fundacion = firebase.auth().currentUser;
+    //         // //this.setState({mascotas:[]})
+    //         // let arraymascotas = []
+    //         // let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
+    //         // //alert('didmout')
+    //         // refFoundation.on('value',snapshot => {
+    //         //   snapshot.forEach((data)=>{
+    //         //       let mascota = data.val()
+    //         //       arraymascotas.push({key: data.key, value: mascota})
+    //         //   })  
+    //         //   this.setState ( {
+    //         //       mascotas: Array.from(arraymascotas)
+    //         //   })
+    //         //  })
+    //     }
+    //   }
+
+ 
 
     componentDidMount(){
         const fundacion = firebase.auth().currentUser;
+        //this.setState({mascotas:[]})
         let arraymascotas = []
         let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
-        refFoundation.on('child_added',snapshot => {
-           // alert(JSON.stringify(snapshot,null,4))
-            arraymascotas.push({key: snapshot.key,value: snapshot.val()})
-         //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
-        //  snapshot.forEach((data)=>{
-        //      let mascota = data.val()
-        //      arraymascotas.push(mascota)
-        //      // alert(JSON.stringify(data.val(),null,4))
+        //alert('didmout')
+        // refFoundation.on('value',snapshot => {
+        //     alert('entro al on')
+        //   snapshot.forEach((data)=>{
+        //       let mascota = data.val()
+        //       arraymascotas.push({key: data.key, value: mascota})
+        //   })  
+        //   this.setState ( {
+        //       mascotas: Array.from(arraymascotas)
+        //   })
         //  })
 
-         //alert(JSON.stringify(arrayfoundation,null,4))
-    
+
+
+
+        refFoundation.on('child_added',snapshot => {        
+            arraymascotas.push({key: snapshot.key,value: snapshot.val()})
          this.setState ( {
              mascotas: Array.from(arraymascotas)
          })
-        //  alert(JSON.stringify(arrayfoundation,null,4))
+        // alert('added => '+JSON.stringify(this.state.mascotas,null,4))
         })
 
         refFoundation.on('child_changed',snapshot => {
-            // alert(JSON.stringify(snapshot,null,4))
-            //alert('algo cambio')
             let arrayAcual = this.state.mascotas;
             arrayAcual.map((item,index)=>{
                 if(item.key === snapshot.key){
-                    //alert('encontro el key :'+item.key+' => '+snapshot.key)
                     arrayAcual[index] = {key: snapshot.key, value: snapshot.val()}
                 }
             })
             this.setState({mascotas: arrayAcual})
+           // alert('changed => '+JSON.stringify(this.state.mascotas,null,4))
+         })
 
-            //alert(JSON.stringify(snapshot,null,4))
-            //  arraymascotas.push({key: snapshot.key,value: snapshot.val()})
-          //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
-         //  snapshot.forEach((data)=>{
-         //      let mascota = data.val()
-         //      arraymascotas.push(mascota)
-         //      // alert(JSON.stringify(data.val(),null,4))
-         //  })
- 
-          //alert(JSON.stringify(arrayfoundation,null,4))
-     
-        //   this.setState ( {
-        //       mascotas: Array.from(arraymascotas)
-        //   })
-         //  alert(JSON.stringify(arrayfoundation,null,4))
+
+         refFoundation.on('child_removed',snapshot => {     
+            let arrayAcual = this.state.mascotas;
+            let arrayFinal = this.state.mascotas
+            arrayAcual.map((item,index)=>{
+                if(item.key === snapshot.key){
+                    arrayFinal.splice(index,1)
+                    this.setState({mascotas: arrayFinal})
+                }
+            })
+           // alert('remove => '+JSON.stringify(this.state.mascotas,null,4))
+            
          })
        
         
     }
 
+    onPressCancel = () => {
+        this.setState({modalVisible: false, key: ''})
+    }
 
+    onPressOK = () =>{
+        const key = this.state.key;
+        const fundacion = firebase.auth().currentUser;
+        let refPet = firebase.database().ref('publicaciones/'+fundacion.uid+'/'+key);
+                   
+        refPet.remove().then(()=>{
+            // setTimeout(() => {
+             
+                 this.setState({
+                     key: '',
+                     modalVisible: false
+                 })
+
+                 
+ 
+         }).catch(error=>{
+             alert(error.message)
+         });
+
+        //this.setState({modalVisible: false})
+    }
 
     _keyExtractor = item => item.key;
     
@@ -125,26 +189,27 @@ export class MascotasF extends Component {
     
     render() {
         //const mascotas = Array.from(this.state.mascotas)
-
+        const mascotas = this.state.mascotas;
         return (
         <View style={{flex:1}}>
-            {/* <ScrollView style={{flex:1}}> */}
-            {/* <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'center'}}>
-            {
-                    mascotas.map((item)=>{
-                       return(
-                           
-                                this.renderItem(item)
-                           
-                       )
-                    })
-                }
-                 </View> */}
+
+                   <AlertDeleteCustom 
+                    modalVisible={this.state.modalVisible}
+                    onBackdropPress={()=>{this.setState({modalVisible: false}); this.props.navigation.navigate('MascotasF')}}
+                    source={require('../../assets/img/trashgif.gif')}
+                    title='Atencion!'
+                    subtitle='Esta seguro de que desea eliminar esta mascota?'
+                    textOK='Aceptar'
+                    textCancel='Cancelar'
+                    onPressCancel={this.onPressCancel.bind(this)}
+                    onPressOK = {this.onPressOK.bind(this)}
+
+                />
 
                  
                      <FlatList
                      style={{flex:1}}
-                     data={this.state.mascotas}
+                     data={mascotas}
                      keyExtractor={this._keyExtractor}     //has to be unique   
                      renderItem={this._renderItem} //method to render the data in the way you want using styling u need
                      horizontal={false}
@@ -159,7 +224,7 @@ export class MascotasF extends Component {
                     
                     position='right'
                     offsetX={10}
-                    offsetY={5}
+                    offsetY={40}
                     
                     />
             
@@ -190,7 +255,14 @@ export class MascotasF extends Component {
                     >
                         <Icon name='edit' size={26} color={myTheme['color-material-primary-400']} />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={
+                        ()=>{
+                            this.setState({
+                                modalVisible: true, 
+                                key
+                            })
+                        }
+                    }>
                         <Icon name='delete-sweep' size={26} color={myTheme['color-material-primary-400']} />
                     </TouchableOpacity>
                </View>

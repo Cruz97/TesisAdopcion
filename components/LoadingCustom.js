@@ -16,7 +16,7 @@ export class LoadingCustom extends Component {
             subtitle,
             textButton,
             onPress,
-            progress
+            progress, info
          } = this.props;
         return (
             <Overlay
@@ -25,9 +25,11 @@ export class LoadingCustom extends Component {
             overlayBackgroundColor="white"
             //onBackdropPress={onBackdropPress}
             width={320}
+            
             height="auto"
             overlayStyle={{padding:20, paddingVertical:50, borderRadius: 10, alignItems: 'center'}}
             >
+                    <Text>{progress}</Text>
                 <Progress.Bar 
                    progress={progress}  
                    width={250}  

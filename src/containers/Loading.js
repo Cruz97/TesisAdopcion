@@ -107,7 +107,7 @@ export default class Loading extends Component {
     const email = navigation.getParam('email','');
     const password = navigation.getParam('password','');
 
-    //this.dataFundaciones()
+
     
 
     // alert(password)
