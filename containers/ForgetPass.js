@@ -105,7 +105,7 @@ export class ForgetPass extends Component {
                 <View style={style.btn}>
                 <ButtonCustom  
                             title="Reestablecer"
-                            colorcustom={myTheme['color-warning-800']}
+                            colorcustom={myTheme['color-success-600']}
                             buttonStyle={
                                 {
                                     marginTop:10,

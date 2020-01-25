@@ -81,7 +81,7 @@ export class Welcome extends Component {
                             />
 
                         <ButtonCustom  
-                            title="Soy Fundacion"
+                            title="Soy Fundación"
                             colorcustom={myTheme['color-primary-700']}
                             buttonStyle={
                                 {

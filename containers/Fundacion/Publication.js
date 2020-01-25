@@ -76,8 +76,14 @@ export class Publication extends Component {
         //alert(JSON.stringify(pet,null,4))
         let action = navigation.getParam('action',null)
         var image = null
+        
+        // var spice = this.state.especie;
+        // var gender = this.state.genero;
 
-
+        // if(pet != null){
+        //     spice = pet.value.spice;
+        //     gender = pet.value.gender; 
+        // }
         
         //alert(image)
         //let name = ''
@@ -87,15 +93,22 @@ export class Publication extends Component {
                 key: null
             })
         }else{
-
-            let spice = parseInt(pet.value.spice);
+            // if(spice == -1) 
+            // let spice = parseInt(this.state.especie);
+            
+            
             let gender = parseInt(pet.value.gender);
+            let spice = parseInt(pet.value.spice);
+            
+            
+            // let gender = parseInt(pet.value.gender);
             let description = pet.value.description;
             let color = pet.value.color;
             let age = pet.value.age;
             //let typepublish = pet.value.typepublish;
             //alert(spice+ ' => '+gender)
             //alert(description)
+            
             var xhr = new XMLHttpRequest()
             xhr.open("GET", pet.value.picture);
             xhr.responseType = "blob";
@@ -112,24 +125,24 @@ export class Publication extends Component {
                     // alert(r)
                     this.setState({
                         images,
-                        
+                        action: action,
+                        name: pet.value.name,
+                        description,
+                        edad: age,
+                        selectedIndexGender: gender,
+                        selectedIndexType: spice,
+                        color,
+                        //typepublish, 
+                        key: pet.key
 
                     })
                 });
             });
             //this.updateIndexGender(gender)
-            this.setState({
-                action: action,
-                name: pet.value.name,
-                description,
-                edad: age,
-                selectedIndexGender: gender,
-                selectedIndexType: spice,
-                color,
-                //typepublish, 
-                key: pet.key
-                //pet
-           })
+        //     this.setState({
+               
+        //         //pet
+        //    })
         }
 
         //alert(this.state.images.length)
@@ -161,7 +174,7 @@ export class Publication extends Component {
                    
             refEditPublish.update({
                 name: name,
-                //picture: imageUrl,
+                //picture: imagen,
                 spice: selectedIndexType,
                 gender: selectedIndexGender,
                 color: color,
@@ -186,7 +199,20 @@ export class Publication extends Component {
         let task = storageRef.putString(imagen,'base64');
         task.on('state_changed', (taskSnapshot) => {
             var progress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100;
-            this.setState({loadVisible: true,uploadValue: progress})
+            var lote = progress/10;
+            //var num = this.state.uploadValue;
+            var cont = 0
+            while(cont < lote){
+                cont++;
+                var num = this.state.uploadValue + lote;
+                //setTimeout(()=>{
+                    this.setState({loadVisible: true,uploadValue: num})
+               // },300)
+            }
+            
+           
+                  
+                                
           });
 
         
@@ -198,12 +224,12 @@ export class Publication extends Component {
                 refPublish.push({
                     name: name,
                     picture: imageUrl,
-                    spice: especie,
-                    gender: genero,
+                    spice: selectedIndexType,
+                    gender: selectedIndexGender,
                     color: color,
                     age: edad,
                     description: description,
-                    typepublish: typepublish
+                    //typepublish: typepublish
                 }).then(()=>{
                    // setTimeout(() => {
                     
@@ -556,7 +582,7 @@ export class Publication extends Component {
                             buttonStyle={
                                 {
                                     marginTop:10,
-                                    borderRadius: 0,
+                                    borderRadius: 10,
                                     width: 200,
                                     marginBottom: 20   
 

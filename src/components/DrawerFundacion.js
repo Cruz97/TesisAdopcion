@@ -133,8 +133,8 @@ class DraweFundacion extends Component {
        
        <Drawer.Section title="Menu">
          {/* <Item label="Inicio" icon="menu1" selected={routeName === 'Membresy'} onPress={() => { this.setState({ active: 'MyMembresy' });  this.props.navigation.navigate('MyMembresy')}}/> */}
-         <Item label="Inicio" icon="home" selected={routeName === 'MyMembresy'} onPress={() => { this.setState({ active: 'MyMembresy' }); this.props.navigation.navigate('MyMembresy') }}/>
-         <Item label="Mascotas" icon="mascota" selected={routeName === 'MascotasF'} onPress={() => { this.setState({ active: 'MascotasF' }); this.props.navigation.navigate('MascotasF') }}/>
+         <Item label="Inicio" icon="home" selected={routeName === 'MascotasF2'} onPress={() => { this.setState({ active: 'MascotasF' }); this.props.navigation.navigate('MascotasF') }}/>
+         <Item label="Publicaciones" icon="mascota" selected={routeName === 'MascotasF'} onPress={() => { this.setState({ active: 'MascotasF' }); this.props.navigation.navigate('MascotasF') }}/>
          <Item label="Nosotros" icon="fundacion" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
          <Item label="Reportes" icon="solicitud" selected={routeName === 'Transactions'} onPress={() => { this.setState({ active: 'Transactions' }); this.props.navigation.navigate('Transactions')}}/>
          <Item label="Acerca de" icon="mascota" selected={routeName === 'About'} onPress={() => { this.setState({ active: 'About' }); this.props.navigation.navigate('About')}}/>

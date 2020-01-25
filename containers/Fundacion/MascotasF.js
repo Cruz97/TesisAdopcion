@@ -25,99 +25,47 @@ const dropdownlist = [
 export class MascotasF extends Component {
 
     static navigationOptions = {
-        title: 'Mascotas',
+        title: 'Publicaciones',
         hideRightComponent: 'hide',
     }
 
     constructor(props){
         super(props);
-        //const fundacion = firebase.auth().currentUser;
-        //let arraymascotas = []
-        //let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
 
-        // refFoundation.on('value',snapshot => {
-        //     snapshot.forEach((data)=>{
-        //         let mascota = data.val()
-        //         arraymascotas.push({key: data.key, value: mascota})
-        //     })  
-        //     // this.setState ( {
-        //     //     mascotas: Array.from(arraymascotas)
-        //     // })
-        //    })
-  
-
-        //alert('constructor')
-        // refFoundation.once('value',snapshot => {
-        //  //    alert(JSON.stringify(snapshot.child('amigosconcola').val()))
-        //  snapshot.forEach((data)=>{
-        //      let mascota = data.val()
-        //      arraymascotas.push(mascota)
-        //      // alert(JSON.stringify(data.val(),null,4))
-        //  })
-
-        //  //alert(JSON.stringify(arrayfoundation,null,4))
-    
-        // //  this.setState ( {
-        // //      mascotas: Array.from(arraymascotas)
-        // //  })
-        // //  alert(JSON.stringify(arrayfoundation,null,4))
-        // })
         this.state={
             selected:'',
             mascotas: [],
             modalVisible: false, 
-            key: ''
+            key: '',
+            refresh: false
         }
     }
 
-    // componentDidUpdate(prevProps){
-    //     if(this.state.mascotas !== prevProps.mascotas){
-    //         //this.setState({mascotas: prevProps.mascotas})
-    //     }
-    //     else{
-    //         this.setState({mascotas: []})
-    //     }
-    // }
-    // componentWillUpdate(nextProps, nextState) {
-    //     if (nextState.mascotas.length != this.state.mascotas.length) {
-    //         //alert('son distintas')
-    //         this.state.mascotas = []
-    //         // const fundacion = firebase.auth().currentUser;
-    //         // //this.setState({mascotas:[]})
-    //         // let arraymascotas = []
-    //         // let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
-    //         // //alert('didmout')
-    //         // refFoundation.on('value',snapshot => {
-    //         //   snapshot.forEach((data)=>{
-    //         //       let mascota = data.val()
-    //         //       arraymascotas.push({key: data.key, value: mascota})
-    //         //   })  
-    //         //   this.setState ( {
-    //         //       mascotas: Array.from(arraymascotas)
-    //         //   })
-    //         //  })
-    //     }
-    //   }
 
- 
 
     componentDidMount(){
+        //alert('didmount')
+        //this.setState({mascotas: []})
         const fundacion = firebase.auth().currentUser;
         //this.setState({mascotas:[]})
         let arraymascotas = []
         let refFoundation = firebase.database().ref('publicaciones/'+fundacion.uid)
         //alert('didmout')
-        // refFoundation.on('value',snapshot => {
-        //     alert('entro al on')
-        //   snapshot.forEach((data)=>{
-        //       let mascota = data.val()
-        //       arraymascotas.push({key: data.key, value: mascota})
-        //   })  
-        //   this.setState ( {
-        //       mascotas: Array.from(arraymascotas)
-        //   })
-        //  })
+        refFoundation.on('value',snapshot => {
+            //alert('entro al on')
+            let newarray = []
+          snapshot.forEach((data)=>{
+              let mascota = data.val()
+              newarray.push({key: data.key, value: mascota})
+          })  
+          this.setState ( {
+              mascotas: Array.from(newarray),
+              refresh: true
+          })
+          //alert(JSON.stringify(newarray,null,4))
+         })
 
+         //this.setState({refresh: false})
 
 
 
@@ -141,15 +89,25 @@ export class MascotasF extends Component {
          })
 
 
-         refFoundation.on('child_removed',snapshot => {     
-            let arrayAcual = this.state.mascotas;
-            let arrayFinal = this.state.mascotas
-            arrayAcual.map((item,index)=>{
+         refFoundation.on('child_removed',snapshot => {    
+             //alert(JSON.stringify(snapshot,null,4)) 
+            let array1 = this.state.mascotas;
+            let arrayFinal = this.state.mascotas;
+            let indice = -1;
+            array1.map((item,index)=>{
                 if(item.key === snapshot.key){
-                    arrayFinal.splice(index,1)
-                    this.setState({mascotas: arrayFinal})
+                    indice = index;
+                    // /break;
+                    // arrayFinal.splice(index,1)
+                    // this.setState({mascotas: arrayFinal})
                 }
             })
+            if(indice != -1){
+                array1.slice(indice,1)
+                this.setState({mascotas: array1})
+
+            }
+            
            // alert('remove => '+JSON.stringify(this.state.mascotas,null,4))
             
          })
@@ -209,10 +167,16 @@ export class MascotasF extends Component {
                  
                      <FlatList
                      style={{flex:1}}
-                     data={mascotas}
+                     data={this.state.mascotas}
                      keyExtractor={this._keyExtractor}     //has to be unique   
                      renderItem={this._renderItem} //method to render the data in the way you want using styling u need
                      horizontal={false}
+                    //  refreshing={this.state.refresh}
+                    //  extraData={this.state}
+                    //  onRefresh = {()=>{
+                    //      this.setState({mascotas: []})
+                    //  }}
+                     //chan
                      numColumns={2}
                                />
                     

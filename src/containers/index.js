@@ -36,6 +36,7 @@ import Mascotas from '../../containers/Adoptante/Mascotas';
 import Fundaciones from '../../containers/Adoptante/Fundaciones';
 import Solicitudes from '../../containers/Adoptante/Solicitudes';
 import Donaciones from '../../containers/Adoptante/Donaciones';
+import PetDetails from '../../containers/Adoptante/PetDetails';
 
 
 
@@ -83,7 +84,8 @@ const stackAppAdoptante = createStackNavigator(
      Mascotas,
      Fundaciones,
      Solicitudes,
-     Donaciones
+     Donaciones,
+     PetDetails
     },
     
     {
@@ -99,8 +101,9 @@ const stackAppAdoptante = createStackNavigator(
 const stackAppFundacion = createStackNavigator(
   {
       //Login,
-    HomeFundacion,
+    
     MascotasF,
+    HomeFundacion,
     Publication,
     About
       // Hotels2,

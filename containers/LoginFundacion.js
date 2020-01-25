@@ -215,10 +215,11 @@ Login = () => {
                         
                         <ButtonCustom  
                             title="Ingresar"
-                            colorcustom={myTheme['color-primary-600']}
+                            colorcustom={myTheme['color-primary-700']}
                             buttonStyle={
                                 {
                                     marginTop:10,
+                                    borderRadius: 10
                                 
                                 }
 

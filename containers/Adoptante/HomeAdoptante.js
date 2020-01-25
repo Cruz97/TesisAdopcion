@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList, TextInput } from 'react-native'
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import {Image,Icon} from 'react-native-elements'
 import ActionButton from 'react-native-action-button'
@@ -24,12 +24,58 @@ const dropdownlist = [
 export class HomeAdoptante extends Component {
 
     static navigationOptions = {
-        title: 'Mascotas',
-        hideRightComponent: 'hide',
+        header: null
+        // title: 'Mascotas',
+        // hideRightComponent: 'hide',
+        //back: true
     }
 
     constructor(props){
         super(props);
+        const fundacion = firebase.auth().currentUser;
+        let mascotas = [];
+        let refFoundation = firebase.database().ref('publicaciones/')
+        //alert(refFoundation.key);
+        refFoundation.on('value',(snapshot) => {
+            var arrayKeyFoundation = [];
+            snapshot.forEach((childSnapshot) =>{
+                // key will be "ada" the first time and "alan" the second time
+                var key = childSnapshot.key;
+                // childData will be the actual contents of the child
+                var childData = childSnapshot.val();
+                arrayKeyFoundation.push(key)
+            });
+            let arraymascotas = [];
+            arrayKeyFoundation.map((keyfoundation)=>{
+                
+                let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
+            refMascotas.on('value',(snapshot)=>{
+                
+                snapshot.forEach((childSnapshot) =>{
+                    // key will be "ada" the first time and "alan" the second time
+                    var key = childSnapshot.key;
+                    // childData will be the actual contents of the child
+                    var dataMascota = childSnapshot.val();
+                    arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
+                });
+                //alert(JSON.stringify(arraymascotas,null,4))
+               // mascotas = arraymascotas;
+                
+            })
+            //alert(arraymascotas.length)
+
+            })
+
+            // alert(JSON.stringify(arraymascotas,null,4))
+            // this.setState({
+            //     mascotas: arraymascotas
+            // })
+
+
+            
+            //alert(arrayKeyFoundation)
+        })
+        
         this.state = {
             mascotas: []
         }
@@ -67,22 +113,34 @@ export class HomeAdoptante extends Component {
                 var childData = childSnapshot.val();
                 arrayKeyFoundation.push(key)
             });
-            let refMascotas = firebase.database().ref('publicaciones/'+arrayKeyFoundation[0]);
+            let arraymascotas = [];
+            arrayKeyFoundation.map((keyfoundation)=>{
+                
+                let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
             refMascotas.on('value',(snapshot)=>{
-                let arraymascotas = [];
+                
                 snapshot.forEach((childSnapshot) =>{
                     // key will be "ada" the first time and "alan" the second time
-                    //var key = childSnapshot.key;
+                    var key = childSnapshot.key;
                     // childData will be the actual contents of the child
                     var dataMascota = childSnapshot.val();
-                    arraymascotas.push(dataMascota)
+                    arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
                 });
                 //alert(JSON.stringify(arraymascotas,null,4))
                // mascotas = arraymascotas;
-                this.setState({
-                    mascotas: arraymascotas
-                })
+                
             })
+            //alert(arraymascotas.length)
+
+            })
+
+            // alert(JSON.stringify(arraymascotas,null,4))
+            this.setState({
+                mascotas: arraymascotas
+            })
+
+
+            
             //alert(arrayKeyFoundation)
         })
         
@@ -96,9 +154,21 @@ export class HomeAdoptante extends Component {
     
     render() {
         const mascotas = this.state.mascotas
-        //alert(JSON.stringify(mascotas,null,4))
+        //alert(JSON.stringify(mascotas.length,null,4))
         return (
         <View style={{flex:1}}>
+            <View style={style.header}>
+                    <TouchableOpacity  onPress={()=> this.props.navigation.openDrawer()} style={style.back}>
+                        <Icon  name='menu' type='material' color='#FFF' size={28} />
+                    </TouchableOpacity>
+
+                    <TextInput style={style.input} placeholder="Buscar..." onChangeText={this.handleTexto}></TextInput>
+
+                    <TouchableOpacity style={style.filter} onPress= {()=>{}}>
+                        <Icon name='filter' type='material-community' color='#FFF' size={30}/>
+                    </TouchableOpacity>
+
+                </View>
             {/* <ScrollView style={{flex:1}}> */}
             {/* <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'center'}}>
             {
@@ -143,7 +213,7 @@ export class HomeAdoptante extends Component {
                
                 {/* /> */}
             {/* </ScrollView> */}
-            <ActionButton
+            {/* <ActionButton
                     buttonColor={myTheme['color-primary-700']}
                     onPress={() => this.props.navigation.push('Publication') }
                     
@@ -151,14 +221,14 @@ export class HomeAdoptante extends Component {
                     offsetX={10}
                     offsetY={5}
                     
-                    />
+                    /> */}
             
             </View>
         )
     }
 
     renderItemPet = (item) => {
-        
+        const {key, value, keyfoundation} = item;
         return(
             <View style={style.boxitem}>
            
@@ -166,12 +236,15 @@ export class HomeAdoptante extends Component {
 
         
                <View style={[style.boximg]}>
-                       <TouchableOpacity style={{width: '100%', height: '100%'}} onPress={()=> {}} >
-                           <Image style={style.img} source={{uri: item.picture}}  />
+                       <TouchableOpacity 
+                       style={{width: '100%', height: '100%'}} 
+                       onPress={()=> {
+                           this.props.navigation.push('PetDetails',{pet: item})}} >
+                           <Image style={style.img} source={{uri: value.picture}}  />
                        </TouchableOpacity>
                </View>
                <View style={style.boxinfo}>
-                    <Text style={style.title}>{item.name}</Text>
+                    <Text style={style.title}>{value.name}</Text>
                </View>
                
                
@@ -189,6 +262,37 @@ const style = StyleSheet.create({
         // backgroundColor: '#f2f2f2',
         //paddingBottom: 40
     },
+    header:{
+        height: 55,
+        backgroundColor: myTheme['color-primary-800'],
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    back:{
+        marginLeft: 15,
+        marginTop: 12
+    },
+    filter:{
+        marginRight: 20,
+        marginTop: 10
+    },
+    input:{
+        flex: 1,
+        
+        //marginLeft: 25,
+        //width: '100%',
+        paddingVertical: 0,
+        paddingHorizontal: 10,
+        
+        margin: 10,
+        fontSize: 15,
+        fontWeight: '700',
+        //borderWidth: 1,
+        borderRadius: 4,
+        borderColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'white'
+        
+    }, 
     boxitem:{
         //flex:2,
         // backgroundColor: 'blue',    

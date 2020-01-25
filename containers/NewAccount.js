@@ -6,6 +6,7 @@ import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
 import {myTheme} from '../src/assets/styles/Theme'
+import {KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const actionCodeSettings = {
     // URL you want to redirect back to. The domain (www.example.com) for
@@ -87,18 +88,18 @@ export class NewAccount extends Component {
                     
                   }).then(()=>{
                     //firebase.auth().sen
-                    firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
-                    .then(() => {
-                        alert('Se ha enviado el correo de verificacion')
-                      // Construct email verification template, embed the link and send
-                      // using custom SMTP server.
-                      //return sendCustomVerificationEmail(useremail, displayName, link);
-                    })
-                    .catch((error) => {
-                      alert('error: '+error.message)
-                    });
+                    // firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+                    // .then(() => {
+                    //     alert('Se ha enviado el correo de verificacion')
+                    //   // Construct email verification template, embed the link and send
+                    //   // using custom SMTP server.
+                    //   //return sendCustomVerificationEmail(useremail, displayName, link);
+                    // })
+                    // .catch((error) => {
+                    //   alert('error: '+error.message)
+                    // });
                   
-                    //this.props.navigation.navigate('RegisterSuccessfull')
+                    this.props.navigation.navigate('RegisterSuccessfull')
                     //   firebase.auth().signInWithEmailAndPassword(
                     //       userCredentials.user.email,
                     //       this.state.contrasena
@@ -149,6 +150,7 @@ export class NewAccount extends Component {
                 <View style={style.boxlogo}>
                         <Image source={require('../assets/img/img_menu.jpeg')} style={style.logo}/>
                     </View>
+                    <KeyboardAwareScrollView>
                 <View style={style.form}>
                 <Input
                         
@@ -254,6 +256,7 @@ export class NewAccount extends Component {
                     </View>
 
                 </View>
+                </KeyboardAwareScrollView>
                 
             </View>
         )
