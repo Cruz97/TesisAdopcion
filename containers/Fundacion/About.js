@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native'
 import { myTheme } from '../../src/assets/styles/Theme';
 import {ListItem, Icon} from 'react-native-elements';
-import { ItemBenefitSchema } from '../../database/CloudRealm';
+
 
 
 const ItemAbout = props => {

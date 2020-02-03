@@ -6,8 +6,7 @@ import moment, { defaultFormat } from 'moment'
 import ItemTools from '../components/ItemTools';
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 import {Dialog} from 'react-native-simple-dialogs'
-import local from '../database/LocalRealm'
-import Database from '../database/index'
+
 
 
 

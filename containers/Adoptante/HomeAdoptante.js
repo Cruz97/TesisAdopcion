@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity,ScrollView, FlatList, TextInput } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity,ToastAndroid, ScrollView, FlatList, TextInput } from 'react-native'
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import {Image,Icon} from 'react-native-elements'
 import ActionButton from 'react-native-action-button'
@@ -8,6 +8,8 @@ import Selection from '../../src/components/Selection'
 import firebase from '@react-native-firebase/app'
 import auth from '@react-native-firebase/auth'
 import database from '@react-native-firebase/database'
+import { NavigationEvents } from 'react-navigation';
+import { withNavigationFocus } from 'react-navigation';
 
 
 const dropdownlist = [
@@ -32,52 +34,10 @@ export class HomeAdoptante extends Component {
 
     constructor(props){
         super(props);
-        const fundacion = firebase.auth().currentUser;
-        let mascotas = [];
-        let refFoundation = firebase.database().ref('publicaciones/')
-        //alert(refFoundation.key);
-        refFoundation.on('value',(snapshot) => {
-            var arrayKeyFoundation = [];
-            snapshot.forEach((childSnapshot) =>{
-                // key will be "ada" the first time and "alan" the second time
-                var key = childSnapshot.key;
-                // childData will be the actual contents of the child
-                var childData = childSnapshot.val();
-                arrayKeyFoundation.push(key)
-            });
-            let arraymascotas = [];
-            arrayKeyFoundation.map((keyfoundation)=>{
-                
-                let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
-            refMascotas.on('value',(snapshot)=>{
-                
-                snapshot.forEach((childSnapshot) =>{
-                    // key will be "ada" the first time and "alan" the second time
-                    var key = childSnapshot.key;
-                    // childData will be the actual contents of the child
-                    var dataMascota = childSnapshot.val();
-                    arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
-                });
-                //alert(JSON.stringify(arraymascotas,null,4))
-               // mascotas = arraymascotas;
-                
-            })
-            //alert(arraymascotas.length)
-
-            })
-
-            // alert(JSON.stringify(arraymascotas,null,4))
-            // this.setState({
-            //     mascotas: arraymascotas
-            // })
-
-
-            
-            //alert(arrayKeyFoundation)
-        })
+       
         
         this.state = {
-            mascotas: []
+            mascotas: null
         }
        
 
@@ -98,13 +58,22 @@ export class HomeAdoptante extends Component {
     //         this.setState({mascotas: []})
     //     }
     // }
+ 
+
+
 
     componentDidMount(){
+
+       
+        //alert('didmount')
         const fundacion = firebase.auth().currentUser;
-        let mascotas = [];
+        //alert(JSON.stringify(this.props.navigation))
+        //ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+        //let mascotas = [];
         let refFoundation = firebase.database().ref('publicaciones/')
         //alert(refFoundation.key);
         refFoundation.on('value',(snapshot) => {
+           
             var arrayKeyFoundation = [];
             snapshot.forEach((childSnapshot) =>{
                 // key will be "ada" the first time and "alan" the second time
@@ -113,12 +82,13 @@ export class HomeAdoptante extends Component {
                 var childData = childSnapshot.val();
                 arrayKeyFoundation.push(key)
             });
+            //alert(arrayKeyFoundation)
             let arraymascotas = [];
             arrayKeyFoundation.map((keyfoundation)=>{
                 
                 let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
             refMascotas.on('value',(snapshot)=>{
-                
+                //alert(JSON.stringify(snapshot,null,4))
                 snapshot.forEach((childSnapshot) =>{
                     // key will be "ada" the first time and "alan" the second time
                     var key = childSnapshot.key;
@@ -126,24 +96,101 @@ export class HomeAdoptante extends Component {
                     var dataMascota = childSnapshot.val();
                     arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
                 });
-                //alert(JSON.stringify(arraymascotas,null,4))
-               // mascotas = arraymascotas;
                 
             })
-            //alert(arraymascotas.length)
 
             })
 
-            // alert(JSON.stringify(arraymascotas,null,4))
+            // arrayKeyFoundation.map((keyfoundation)=>{
+                
+            //     let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
+            // refMascotas.on('value',(snapshot)=>{
+            //     //alert(JSON.stringify(snapshot,null,4))
+            //     //snapshot.forEach((childSnapshot) =>{
+            //         // key will be "ada" the first time and "alan" the second time
+            //         var key = snapshot.key;
+            //         // childData will be the actual contents of the child
+            //         var dataMascota = snapshot.val();
+            //         arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
+            //    // });
+                
+            // })
+
+            // })
+
+
             this.setState({
                 mascotas: arraymascotas
             })
-
-
-            
-            //alert(arrayKeyFoundation)
         })
+
+
+        //this.refs.SearchInput.focus();
         
+    }
+
+
+    Refresh = () => {
+        const fundacion = firebase.auth().currentUser;
+        //alert(JSON.stringify(this.props.navigation))
+        //ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+        //let mascotas = [];
+        let refFoundation = firebase.database().ref('publicaciones/')
+        //alert(refFoundation.key);
+        refFoundation.on('value',(snapshot) => {
+           
+            var arrayKeyFoundation = [];
+            snapshot.forEach((childSnapshot) =>{
+                // key will be "ada" the first time and "alan" the second time
+                var key = childSnapshot.key;
+                // childData will be the actual contents of the child
+                var childData = childSnapshot.val();
+                arrayKeyFoundation.push(key)
+            });
+            //alert(arrayKeyFoundation)
+            let arraymascotas = [];
+            arrayKeyFoundation.map((keyfoundation)=>{
+                
+                let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
+            refMascotas.on('value',(snapshot)=>{
+                //alert(JSON.stringify(snapshot,null,4))
+                snapshot.forEach((childSnapshot) =>{
+                    // key will be "ada" the first time and "alan" the second time
+                    var key = childSnapshot.key;
+                    // childData will be the actual contents of the child
+                    var dataMascota = childSnapshot.val();
+                    arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
+                });
+                
+            })
+
+            })
+
+            // arrayKeyFoundation.map((keyfoundation)=>{
+                
+            //     let refMascotas = firebase.database().ref('publicaciones/'+keyfoundation);
+            // refMascotas.on('child_added',(snapshot)=>{
+            //     //alert(JSON.stringify(snapshot,null,4))
+            //     //snapshot.forEach((childSnapshot) =>{
+            //         // key will be "ada" the first time and "alan" the second time
+            //         var key = snapshot.key;
+            //         // childData will be the actual contents of the child
+            //         var dataMascota = snapshot.val();
+            //         arraymascotas.push({key: key, value: dataMascota, keyfoundation: keyfoundation})
+            //    // });
+                
+            // })
+
+            // })
+
+
+            this.setState({
+                mascotas: arraymascotas
+            })
+        })
+
+
+        //this.refs.SearchInput.focus();
     }
 
 
@@ -154,15 +201,25 @@ export class HomeAdoptante extends Component {
     
     render() {
         const mascotas = this.state.mascotas
+        
         //alert(JSON.stringify(mascotas.length,null,4))
         return (
         <View style={{flex:1}}>
+            <NavigationEvents
+                onDidFocus={() => {
+                    
+                }}
+                />
             <View style={style.header}>
                     <TouchableOpacity  onPress={()=> this.props.navigation.openDrawer()} style={style.back}>
                         <Icon  name='menu' type='material' color='#FFF' size={28} />
                     </TouchableOpacity>
 
-                    <TextInput style={style.input} placeholder="Buscar..." onChangeText={this.handleTexto}></TextInput>
+                    <TextInput style={style.input} 
+                    placeholder="Buscar..." 
+                    onChangeText={this.handleTexto}
+                    ref='SearchInput'
+                    ></TextInput>
 
                     <TouchableOpacity style={style.filter} onPress= {()=>{}}>
                         <Icon name='filter' type='material-community' color='#FFF' size={30}/>
@@ -362,4 +419,4 @@ const style = StyleSheet.create({
     },
 })
 
-export default HomeAdoptante;
+export default withNavigationFocus(HomeAdoptante);

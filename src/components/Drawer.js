@@ -63,6 +63,7 @@ class DrawerCustom extends Component {
     
 
     //alert(this.state.user)
+    //alert(JSON.stringify(this.props.navigation,null,4))
   
   }
 
@@ -129,8 +130,8 @@ class DrawerCustom extends Component {
      
      <Drawer.Section style={{marginLeft: 10}}>
          {/* <Item label="Inicio" icon="menu1" selected={routeName === 'Membresy'} onPress={() => { this.setState({ active: 'MyMembresy' });  this.props.navigation.navigate('MyMembresy')}}/> */}
-         <Item label="Inicio" icon="home" selected={routeName === 'HomeAdoptante'} onPress={() => { this.setState({ active: 'HomeAdoptante' }); this.props.navigation.navigate('HomeAdoptante') }}/>
-         <Item label="Mascotas" icon="mascota" selected={routeName === 'Mascotas'} onPress={() => { this.setState({ active: 'Mascotas' }); this.props.navigation.navigate('Mascotas') }}/>
+         <Item label="Inicio" icon="home" selected={routeName === 'Masc'} onPress={() => { this.setState({ active: 'HomeAdoptante' }); this.props.navigation.navigate('HomeAdoptante') }}/>
+         <Item label="Mascotas" icon="mascota" selected={routeName === 'HomeAdoptante'} onPress={() => { this.setState({ active: 'HomeAdoptante' }); this.props.navigation.navigate('HomeAdoptante') }}/>
          <Item label="Fundaciones" icon="fundacion" selected={routeName === 'Fundaciones'} onPress={() => { this.setState({ active: 'Fundaciones' }); this.props.navigation.navigate('Fundaciones')}}/>
          <Item label="Mis Solicitudes" icon="solicitud" selected={routeName === 'Solicitudes'} onPress={() => { this.setState({ active: 'Solicitudes' }); this.props.navigation.navigate('Solicitudes') }}/>
          <Item label="Donaciones" icon="donacion" selected={routeName === 'Donaciones'} onPress={() => { this.setState({ active: 'Donaciones' }); this.props.navigation.navigate('Donaciones') }}/>

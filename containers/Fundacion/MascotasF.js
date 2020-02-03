@@ -44,6 +44,7 @@ export class MascotasF extends Component {
 
 
     componentDidMount(){
+        //alert(JSON.stringify(this.props.navigation))
         //alert('didmount')
         //this.setState({mascotas: []})
         const fundacion = firebase.auth().currentUser;

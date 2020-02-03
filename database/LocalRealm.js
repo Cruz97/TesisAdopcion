@@ -1,4 +1,4 @@
-import Realm from 'realm';
+
 
 const schema = [
   {
@@ -63,4 +63,4 @@ const realmOptions = {
 
 
 
-export const local = new Realm(realmOptions);
+export const local = null;

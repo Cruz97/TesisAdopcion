@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
 import {Load} from '../components';
-import Database, {RealmObject} from '../../database';
-import schema from '../../database/CloudRealm';
-import Realm from 'realm';
 import Odoo from 'react-native-odoo-promise-based'
 import { Alert } from 'react-native';
 import firebase from '@react-native-firebase/app'

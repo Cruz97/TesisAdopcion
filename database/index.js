@@ -1,7 +1,7 @@
 import { local } from './LocalRealm';
 import { v1 } from 'uuid';
 import { schema } from './CloudRealm';
-import Realm from 'realm';
+
 
 export class RealmObject {
   constructor(realm) {
@@ -69,20 +69,8 @@ export class RealmObject {
 
 const Database = {
   User: null,
-  LocalDB: new RealmObject(local),
-  CloudDB: Realm.Sync.User.current ? 
-    new RealmObject(
-        new Realm(
-          Realm.Sync.User.current.createConfiguration({
-            sync: {
-              fullSynchronization: true,
-              url: 'realms://oroverdeprod.us1.cloud.realm.io/OroVerde'
-            },
-            schema
-          })
-        )
-      )
-    : null
+  LocalDB: null,
+  CloudDB: null
 };
 
 export default Database;

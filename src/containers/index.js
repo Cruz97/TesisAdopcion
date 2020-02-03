@@ -37,6 +37,9 @@ import Fundaciones from '../../containers/Adoptante/Fundaciones';
 import Solicitudes from '../../containers/Adoptante/Solicitudes';
 import Donaciones from '../../containers/Adoptante/Donaciones';
 import PetDetails from '../../containers/Adoptante/PetDetails';
+import Form from '../../containers/Adoptante/Form';
+import PersonalInformation from '../../containers/Adoptante/PersonalInformation';
+import AddressInformation from '../../containers/Adoptante/AddressInformation';
 
 
 
@@ -80,17 +83,21 @@ const Auth = createStackNavigator({
 
 const stackAppAdoptante = createStackNavigator(
   {
-     HomeAdoptante,
+    HomeAdoptante,
      Mascotas,
+     
      Fundaciones,
      Solicitudes,
      Donaciones,
-     PetDetails
+     PetDetails,
+     Form,
+     PersonalInformation,
+     AddressInformation
     },
     
     {
       defaultNavigationOptions: props => drawerDefaultNavigationOptions(props),
-      
+      //initialRouteName: 'HomeAdoptante'
     
     },
    
@@ -116,9 +123,9 @@ const stackAppFundacion = createStackNavigator(
     
     {
       defaultNavigationOptions: props => drawerDefaultNavigationOptionsFundacion(props),
-      
     
     },
+
    
   
 )
@@ -130,6 +137,7 @@ const AppAdoptante = createDrawerNavigator(
   {
     contentComponent: Drawer,
     drawerPosition: 'left',
+    
   },
 );
 
